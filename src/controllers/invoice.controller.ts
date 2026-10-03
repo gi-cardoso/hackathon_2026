@@ -23,7 +23,7 @@ export class InvoiceController {
           resource.metadados.tipoArquivo,
         );
         try {
-          await prisma.notaFiscal.create({
+          const notaFiscal = await prisma.notaFiscal.create({
             data: {
               numero_nf: resource.identificacao.numero,
               serie: resource.identificacao.serie,
@@ -41,6 +41,10 @@ export class InvoiceController {
               arquivo_nf: storedFile.relativePath,
             },
           });
+          return res.status(200).json({
+            ...resource,
+            id_nota: notaFiscal.id_nota,
+          });
         } catch (error) {
           await InvoiceFileStorage.remove(storedFile.absolutePath);
           if (
@@ -49,15 +53,19 @@ export class InvoiceController {
             "code" in error &&
             error.code === "P2002"
           ) {
+            const notaExistente = await prisma.notaFiscal.findUnique({
+              where: { chave_acesso: resource.identificacao.chaveAcesso },
+              select: { id_nota: true },
+            });
             return res.status(409).json({
               error: "Nota fiscal já cadastrada.",
               details: "Já existe uma nota fiscal com esta chave de acesso.",
               chaveAcesso: resource.identificacao.chaveAcesso,
+              id_nota: notaExistente?.id_nota,
             });
           }
           throw error;
         }
-        return res.status(200).json(resource);
       }
       // 2. Alternativa: envio de XML como string no corpo JSON ({ "xml": "<nfeProc>..." })
       if (req.body && req.body.xml) {
