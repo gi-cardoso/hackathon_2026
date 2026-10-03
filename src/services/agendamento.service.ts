@@ -2,6 +2,55 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 const ACTIVE_STATUSES = ["PENDENTE", "APROVADO"];
 const VALID_SLOTS = new Set(["08:00", "10:00", "13:00", "15:00"]);
+const ANALISE_INCLUDE = {
+  fornecedor: {
+    select: {
+      id_fornecedor: true,
+      codigo_fornecedor_cocapec: true,
+      nome_fornecedor: true,
+      cnpj: true,
+      contato: true,
+      ativo: true,
+    },
+  },
+  nota_fiscal: true,
+  cargas: {
+    include: {
+      itens: true,
+      destinos: { include: { armazem: true } },
+    },
+  },
+  validacoes: {
+    include: {
+      responsavel: {
+        select: {
+          id_usuario: true,
+          nome: true,
+          matricula: true,
+          email: true,
+          ativo: true,
+          role: true,
+        },
+      },
+    },
+  },
+  recebimentos: {
+    include: {
+      descargas: {
+        include: {
+          armazem: true,
+          chapas: { include: { chapa: true } },
+          equipamentos: { include: { equipamento: true } },
+        },
+      },
+    },
+  },
+  nao_recebimentos: true,
+} satisfies Prisma.AgendamentoInclude;
+
+export type AgendamentoParaAnalise = Prisma.AgendamentoGetPayload<{
+  include: typeof ANALISE_INCLUDE;
+}>;
 
 export interface CreateAgendamentoInput {
   id_fornecedor?: number;
@@ -18,6 +67,8 @@ export interface CreateAgendamentoInput {
     codigo_deposito?: string;
   }>;
 }
+
+export type DecisaoAgendamento = "APROVADO" | "REJEITADO";
 
 export class AgendamentoService {
   static async create(
@@ -112,6 +163,74 @@ export class AgendamentoService {
       return { quantidade: 2, regra: "PALETIZADO_2_CHAPAS" };
     }
     return { quantidade: 2, regra: "BIG_BAG_2_CHAPAS" };
+  }
+
+  static async listForPurchasing(prisma: PrismaClient) {
+    return prisma.agendamento.findMany({
+      where: {
+        status_agendamento: "PENDENTE",
+        validacoes: {
+          some: { tipo_validacao: "COMPRAS", status: "PENDENTE" },
+        },
+      },
+      include: ANALISE_INCLUDE,
+      orderBy: [{ data_agendada: "asc" }, { horario_agendado: "asc" }],
+    });
+  }
+
+  static async getForPurchasing(prisma: PrismaClient, id: number) {
+    return prisma.agendamento.findUnique({
+      where: { id_agendamento: id },
+      include: ANALISE_INCLUDE,
+    });
+  }
+
+  static async decide(
+    prisma: PrismaClient,
+    id: number,
+    responsavelId: number,
+    decisao: DecisaoAgendamento,
+  ) {
+    return prisma.$transaction(async (tx) => {
+      const agendamento = await tx.agendamento.findUnique({
+        where: { id_agendamento: id },
+        include: {
+          validacoes: {
+            where: { tipo_validacao: "COMPRAS" },
+            orderBy: { id_validacao: "desc" },
+            take: 1,
+          },
+        },
+      });
+
+      if (!agendamento) {
+        throw new Error("Agendamento não encontrado.");
+      }
+
+      const validacao = agendamento.validacoes[0];
+      if (
+        agendamento.status_agendamento !== "PENDENTE" ||
+        !validacao ||
+        validacao.status !== "PENDENTE"
+      ) {
+        throw new Error("Este agendamento já foi analisado.");
+      }
+
+      await tx.validacao.update({
+        where: { id_validacao: validacao.id_validacao },
+        data: { status: decisao, responsavel_id: responsavelId },
+      });
+
+      await tx.agendamento.update({
+        where: { id_agendamento: id },
+        data: { status_agendamento: decisao },
+      });
+
+      return tx.agendamento.findUniqueOrThrow({
+        where: { id_agendamento: id },
+        include: ANALISE_INCLUDE,
+      });
+    });
   }
 
   private static normalizeType(value: string): string {

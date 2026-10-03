@@ -11,4 +11,25 @@ agendamentoRouter.post(
   AgendamentoController.create,
 );
 
+agendamentoRouter.get(
+  "/analise/compras",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.hasRole(["COMPRAS", "ADMIN"]),
+  AgendamentoController.listForPurchasing,
+);
+
+agendamentoRouter.get(
+  "/analise/compras/:id",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.hasRole(["COMPRAS", "ADMIN"]),
+  AgendamentoController.getForPurchasing,
+);
+
+agendamentoRouter.patch(
+  "/analise/compras/:id/decisao",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.hasRole(["COMPRAS", "ADMIN"]),
+  AgendamentoController.decide,
+);
+
 export { agendamentoRouter };
