@@ -11,11 +11,6 @@ export function Sidebar() {
       <nav className="sidebar-nav">
         <ul>
           <li>
-            <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              Início
-            </NavLink>
-          </li>
-          <li>
             <NavLink to="/compras" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Compras
             </NavLink>

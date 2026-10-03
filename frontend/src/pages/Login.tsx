@@ -55,7 +55,7 @@ export default function Login() {
       await signIn(email, password);
       setSuccessMsg('Login realizado com sucesso! Redirecionando...');
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/compras');
       }, 500);
     } catch (error: any) {
       if (error.response?.data?.error) {
