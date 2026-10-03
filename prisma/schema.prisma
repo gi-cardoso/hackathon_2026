@@ -13,6 +13,7 @@ model Fornecedor {
   nome_fornecedor             String
   cnpj                        String? @unique
   contato                     String?
+  senha_hash                  String?
   ativo                       Boolean
 
   notas_fiscais               NotaFiscal[]
