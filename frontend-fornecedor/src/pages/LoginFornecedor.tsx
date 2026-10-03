@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './LoginFornecedor.css';
 
 export default function LoginFornecedor() {
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+
   const [cnpj, setCnpj] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -86,7 +91,7 @@ export default function LoginFornecedor() {
     return isValid;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -95,15 +100,21 @@ export default function LoginFornecedor() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      // Fake validation for Supplier
-      if (cnpj === '12.345.678/0001-90' && password === 'fornecedor123') {
-        setSuccessMsg('Login realizado com sucesso! Redirecionando...');
+    try {
+      await signIn(cnpj, password);
+      setSuccessMsg('Login realizado com sucesso! Redirecionando...');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    } catch (error: any) {
+      if (error.response?.data?.error) {
+        setErrorMsg(error.response.data.error);
       } else {
-        setErrorMsg('Credenciais inválidas. Tente novamente.');
+        setErrorMsg('Erro de conexão com o servidor. Tente novamente mais tarde.');
       }
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
