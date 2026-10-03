@@ -1,32 +1,31 @@
-# React + TypeScript + Vite
+# COCAPEC | Portal Interno
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Portal React + TypeScript + Vite para Compras, Armazem, Boletim, BI, Usuarios e Configuracoes.
 
-Currently, two official plugins are available:
+## Rodar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+O portal abre na porta padrao do Vite. Configure a API em `.env`:
+
+```bash
+VITE_API_URL=http://localhost:3000/api
+```
+
+## Comandos
+
+- `npm run build`: typecheck e build de producao
+- `npm run lint`: verificacao Oxlint
+
+## Estrutura
+
+- `src/components`: shell, navegacao e componentes reutilizaveis
+- `src/features/agendamentos`: lista, detalhe e agenda operacional
+- `src/pages`: login e telas de modulos
+- `src/services`: cliente HTTP e integracoes
+- `src/theme.css`: tokens visuais COCAPEC
+
+A fila de analise de agendamentos usa a API real. Modulos sem endpoint no backend exibem a pendencia explicitamente na interface.

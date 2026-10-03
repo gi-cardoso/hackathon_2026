@@ -14,8 +14,12 @@ export function PortalFornecedorLayout() {
   return (
     <div className="fornecedor-layout">
       <header className="fornecedor-layout-header">
-        <div>
-          <h1>Portal do Fornecedor</h1>
+        <div className="fornecedor-brand-block">
+          <div className="fornecedor-logo">COCAPEC</div>
+          <div>
+            <h1>Portal do fornecedor</h1>
+            <p>O melhor café está aqui</p>
+          </div>
           <nav aria-label="Navegação do fornecedor">
             <NavLink to="/dashboard">Início</NavLink>
             <NavLink to="/agendamentos" end>Meus agendamentos</NavLink>

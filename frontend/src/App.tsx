@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
-import { ModuleLayout, TemporaryPage } from './pages/ModulePage';
+import { ModuleLayout } from './pages/ModulePage';
+import { ModuleStatusPage } from './pages/ModuleStatusPage';
 import type { ModuleMenuItem } from './components/ModuleHeader';
 import { AppLayout } from './components/layout/AppLayout';
 import {
@@ -26,7 +27,7 @@ const modules = [
   {
     path: 'compras',
     title: 'Compras',
-    description: 'Funcionalidades temporárias do módulo de compras.',
+    description: 'Fila de análise e relacionamento com fornecedores.',
     pages: [
       { slug: 'solicitacoes', label: 'Solicitações', title: 'Solicitações de compras' },
       { slug: 'fornecedores', label: 'Fornecedores', title: 'Fornecedores' },
@@ -35,7 +36,7 @@ const modules = [
   {
     path: 'armazem',
     title: 'Armazém',
-    description: 'Funcionalidades temporárias do módulo de armazém.',
+    description: 'Portaria, estoque e movimentação de cargas.',
     pages: [
       { slug: 'estoque', label: 'Estoque', title: 'Estoque' },
       { slug: 'movimentacoes', label: 'Movimentações', title: 'Movimentações' },
@@ -44,7 +45,7 @@ const modules = [
   {
     path: 'boletim',
     title: 'Boletim',
-    description: 'Funcionalidades temporárias do módulo de boletim.',
+    description: 'Lançamento e fechamento da produção diária.',
     pages: [
       { slug: 'publicacoes', label: 'Publicações', title: 'Publicações' },
       { slug: 'comunicados', label: 'Comunicados', title: 'Comunicados' },
@@ -53,7 +54,7 @@ const modules = [
   {
     path: 'bi',
     title: 'BI',
-    description: 'Funcionalidades temporárias do módulo de BI.',
+    description: 'Indicadores para decisão operacional.',
     pages: [
       { slug: 'indicadores', label: 'Indicadores', title: 'Indicadores' },
       { slug: 'relatorios', label: 'Relatórios', title: 'Relatórios' },
@@ -62,7 +63,7 @@ const modules = [
   {
     path: 'usuarios',
     title: 'Usuários',
-    description: 'Funcionalidades temporárias do módulo de usuários.',
+    description: 'Acessos, perfis e convites da operação.',
     pages: [
       { slug: 'lista', label: 'Lista de usuários', title: 'Lista de usuários' },
       { slug: 'convites', label: 'Convites', title: 'Convites' },
@@ -71,7 +72,7 @@ const modules = [
   {
     path: 'configuracoes',
     title: 'Configurações',
-    description: 'Funcionalidades temporárias do módulo de configurações.',
+    description: 'Preferências e integrações do portal.',
     pages: [
       { slug: 'preferencias', label: 'Preferências', title: 'Preferências' },
       { slug: 'integracoes', label: 'Integrações', title: 'Integrações' },
@@ -147,13 +148,9 @@ function App() {
                   <Route
                     key={page.slug}
                     path={page.slug}
-                    element={
-                      <TemporaryPage
-                        modulePath={module.path}
-                        moduleTitle={module.title}
-                        title={page.title}
-                      />
-                    }
+                    element={module.path === 'compras' && page.slug === 'solicitacoes'
+                      ? <AgendamentosListPage />
+                      : <ModuleStatusPage modulePath={module.path} moduleTitle={module.title} title={page.title} />}
                   />
                 ))}
               </Route>

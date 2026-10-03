@@ -1,0 +1,7 @@
+.module-status-page { display: grid; gap: var(--space-3); max-width: 860px; }
+.module-status-page h2 { margin: 0; }
+.module-status-page > p { color: var(--muted); margin: 0; }
+.module-status-page .ui-card { display: grid; gap: var(--space-2); }
+.module-status-page .ui-card strong { color: var(--blue-900); }
+.module-status-page .ui-card span { color: var(--muted); }
+.module-status-page code { background: var(--blue-50); border-radius: var(--radius-xs); color: var(--blue-900); font-size: 0.8rem; overflow-wrap: anywhere; padding: var(--space-2); }

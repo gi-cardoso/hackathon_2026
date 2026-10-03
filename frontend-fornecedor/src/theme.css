@@ -1,0 +1,59 @@
+:root {
+  --blue-700: #0A5A9C;
+  --blue-900: #073B66;
+  --blue-50: #EAF3FA;
+  --yellow-500: #F5C400;
+  --green-600: #4EA83C;
+  --green-800: #2F7D32;
+  --surface: #F7F9FB;
+  --danger: #C62828;
+  --white: #FFFFFF;
+  --ink: #102A43;
+  --muted: #52606D;
+  --line: #D9E2EC;
+  --font-family-base: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 8px rgba(7, 59, 102, 0.08);
+  --shadow-md: 0 10px 24px rgba(7, 59, 102, 0.12);
+  --space-1: clamp(0.35rem, 0.8vw, 0.55rem);
+  --space-2: clamp(0.6rem, 1.2vw, 0.9rem);
+  --space-3: clamp(0.9rem, 1.8vw, 1.25rem);
+  --space-4: clamp(1.2rem, 2.4vw, 1.75rem);
+  --space-5: clamp(1.6rem, 3.5vw, 2.5rem);
+  --content-width: 1440px;
+  --color-primary: var(--blue-700);
+  --color-primary-light: var(--blue-50);
+  --color-primary-dark: var(--blue-900);
+  --color-secondary: var(--yellow-500);
+  --color-secondary-light: #FFE78A;
+  --color-bg-main: var(--surface);
+  --color-bg-surface: var(--white);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--muted);
+  --color-text-tertiary: #829AB1;
+  --color-border: var(--line);
+  --color-success: var(--green-600);
+  --color-error: var(--danger);
+  --color-warning: var(--yellow-500);
+  --color-info: var(--blue-700);
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-3);
+  --spacing-lg: var(--space-4);
+  --spacing-xl: var(--space-5);
+  --spacing-2xl: clamp(2rem, 5vw, 4rem);
+  --radius-xs: 6px;
+}
+
+* { box-sizing: border-box; }
+html { min-width: 320px; background: var(--surface); }
+body { margin: 0; min-width: 320px; min-height: 100dvh; overflow-x: hidden; background: var(--surface); color: var(--ink); font-family: var(--font-family-base); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+a { color: var(--blue-700); text-decoration: none; }
+a:hover { color: var(--blue-900); }
+:focus-visible { outline: 3px solid rgba(245, 196, 0, 0.75); outline-offset: 2px; }
+h1, h2, h3, h4, p { margin-top: 0; }
+h1, h2, h3, h4 { color: var(--blue-900); line-height: 1.15; }
