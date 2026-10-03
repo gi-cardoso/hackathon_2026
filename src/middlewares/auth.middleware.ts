@@ -40,7 +40,7 @@ export class AuthMiddleware {
     const secret = process.env.JWT_SECRET || "default_secret";
 
     try {
-      const decoded = jwt.verify(token, secret) as AuthPayload;
+      const decoded = jwt.verify(token, secret) as unknown as AuthPayload;
 
       // Validação básica de payload
       if (!decoded.sub || !decoded.tipo) {
