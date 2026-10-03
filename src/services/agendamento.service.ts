@@ -69,6 +69,18 @@ export interface CreateAgendamentoInput {
 }
 
 export type DecisaoAgendamento = "APROVADO" | "REJEITADO";
+export type TipoAcondicionamento = "BATIDO" | "PALETIZADO" | "BIG_BAG";
+
+export interface DisponibilidadeAgendamento {
+  data: string;
+  horarios: Array<{
+    horario: string;
+    disponivel: boolean;
+    vagas_restantes: number;
+    quantidade_agendamentos: number;
+    tipos_disponiveis: TipoAcondicionamento[];
+  }>;
+}
 
 export class AgendamentoService {
   static async create(
@@ -163,6 +175,66 @@ export class AgendamentoService {
       return { quantidade: 2, regra: "PALETIZADO_2_CHAPAS" };
     }
     return { quantidade: 2, regra: "BIG_BAG_2_CHAPAS" };
+  }
+
+  static async availability(
+    prisma: PrismaClient,
+    dataAgendada: string,
+    tipoInput?: string,
+  ): Promise<DisponibilidadeAgendamento> {
+    const data = this.parseDate(dataAgendada);
+    if (!data || data.getDay() === 0 || data.getDay() === 6) {
+      throw new Error("A data do agendamento deve ser de segunda a sexta-feira.");
+    }
+
+    const tipo = tipoInput ? this.normalizeType(tipoInput) : undefined;
+    if (tipo && !["BATIDO", "PALETIZADO", "BIG_BAG"].includes(tipo)) {
+      throw new Error("Tipo de acondicionamento inválido.");
+    }
+
+    const agendamentos = await prisma.agendamento.findMany({
+      where: {
+        data_agendada: data,
+        status_agendamento: { in: ACTIVE_STATUSES },
+      },
+      select: { horario_agendado: true, tipo_acondicionamento: true },
+    });
+
+    const horarios = [...VALID_SLOTS].sort();
+    return {
+      data: dataAgendada,
+      horarios: horarios.map((horario) => {
+        const existentes = agendamentos.filter(
+          (item) => this.normalizeTime(item.horario_agendado) === horario,
+        );
+        const temBatido = existentes.some(
+          (item) => this.normalizeType(item.tipo_acondicionamento) === "BATIDO",
+        );
+        const tiposDisponiveis: TipoAcondicionamento[] = [];
+
+        if (!temBatido && existentes.length === 0) {
+          tiposDisponiveis.push("BATIDO", "PALETIZADO", "BIG_BAG");
+        } else if (!temBatido && existentes.length < 2) {
+          tiposDisponiveis.push("PALETIZADO", "BIG_BAG");
+        }
+
+        const disponivel = tipo
+          ? tiposDisponiveis.includes(tipo as TipoAcondicionamento)
+          : tiposDisponiveis.length > 0;
+
+        return {
+          horario,
+          disponivel,
+          vagas_restantes: tipo === "BATIDO"
+            ? (temBatido || existentes.length > 0 ? 0 : 1)
+            : temBatido
+              ? 0
+              : Math.max(0, 2 - existentes.length),
+          quantidade_agendamentos: existentes.length,
+          tipos_disponiveis: tiposDisponiveis,
+        };
+      }),
+    };
   }
 
   static async listForPurchasing(prisma: PrismaClient) {

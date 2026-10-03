@@ -28,6 +28,23 @@ export class AgendamentoController {
     }
   }
 
+  static async availability(req: Request, res: Response) {
+    const data = String(req.query.data ?? "");
+    const tipo = req.query.tipo_acondicionamento
+      ? String(req.query.tipo_acondicionamento)
+      : undefined;
+
+    try {
+      const disponibilidade = await AgendamentoService.availability(prisma, data, tipo);
+      return res.json(disponibilidade);
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : "Erro ao consultar disponibilidade.";
+      return res.status(400).json({ error: message });
+    }
+  }
+
   static async listForPurchasing(req: Request, res: Response) {
     try {
       const agendamentos = await AgendamentoService.listForPurchasing(prisma);

@@ -12,6 +12,13 @@ agendamentoRouter.post(
 );
 
 agendamentoRouter.get(
+  "/disponibilidade",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.isFornecedor,
+  AgendamentoController.availability,
+);
+
+agendamentoRouter.get(
   "/analise/compras",
   AuthMiddleware.verifyToken,
   AuthMiddleware.hasRole(["COMPRAS", "ADMIN"]),
