@@ -10,12 +10,24 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth();
+  return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" replace />;
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/login" 
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } 
+          />
           <Route 
             path="/dashboard" 
             element={
