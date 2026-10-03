@@ -18,6 +18,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: AuthPayload;
+      currentFornecedorId?: number;
     }
   }
 }
@@ -91,5 +92,28 @@ export class AuthMiddleware {
 
       return next();
     };
+  }
+
+  static enforceFornecedorIdentity(req: Request, res: Response, next: NextFunction) {
+    if (req.user?.tipo === "FORNECEDOR") {
+      const fornecedorId = req.user.sub;
+
+      const bodyId = req.body?.id_fornecedor;
+      const queryId = req.query?.id_fornecedor;
+      const paramsId = req.params?.id_fornecedor;
+
+      const isSpoofing = (id: any) => {
+        if (id === undefined || id === null) return false;
+        return Number(id) !== fornecedorId;
+      };
+
+      if (isSpoofing(bodyId) || isSpoofing(queryId) || isSpoofing(paramsId)) {
+        return res.status(403).json({ error: "Acesso negado. Operação não autorizada para outro fornecedor." });
+      }
+
+      req.currentFornecedorId = fornecedorId;
+    }
+
+    return next();
   }
 }
