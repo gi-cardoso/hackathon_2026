@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Logo } from './Logo';
 import './PortalFornecedorLayout.css';
 
 export function PortalFornecedorLayout() {
@@ -15,7 +16,7 @@ export function PortalFornecedorLayout() {
     <div className="fornecedor-layout">
       <header className="fornecedor-layout-header">
         <div className="fornecedor-brand-block">
-          <div className="fornecedor-logo">COCAPEC</div>
+          <div className="fornecedor-logo"><Logo variant="full-dark" height="clamp(34px, 5vw, 52px)" /></div>
           <div>
             <h1>Portal do fornecedor</h1>
             <p>O melhor café está aqui</p>

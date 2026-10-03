@@ -6,6 +6,9 @@ import { ModuleLayout } from './pages/ModulePage';
 import { ModuleStatusPage } from './pages/ModuleStatusPage';
 import type { ModuleMenuItem } from './components/ModuleHeader';
 import { AppLayout } from './components/layout/AppLayout';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { RoleRoute } from './components/RoleRoute';
+import { SessionExpiryNotice } from './components/SessionExpiryNotice';
 import {
   AgendaOperacionalPage,
   AgendamentoDetailPage,
@@ -23,11 +26,16 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return !isAuthenticated ? <>{children}</> : <Navigate to="/compras" replace />;
 }
 
+function AccessDeniedPage() {
+  return <main className="page-content"><div className="module-status-page"><span className="page-eyebrow">Acesso restrito</span><h1>Você não tem permissão para esta área.</h1><p>Solicite o perfil adequado ao administrador do portal.</p></div></main>;
+}
+
 const modules = [
   {
     path: 'compras',
     title: 'Compras',
     description: 'Fila de análise e relacionamento com fornecedores.',
+    roles: ['COMPRAS', 'ADMIN'],
     pages: [
       { slug: 'solicitacoes', label: 'Solicitações', title: 'Solicitações de compras' },
       { slug: 'fornecedores', label: 'Fornecedores', title: 'Fornecedores' },
@@ -37,6 +45,7 @@ const modules = [
     path: 'armazem',
     title: 'Armazém',
     description: 'Portaria, estoque e movimentação de cargas.',
+    roles: ['ARMAZEM', 'PORTARIA', 'ADMIN'],
     pages: [
       { slug: 'estoque', label: 'Estoque', title: 'Estoque' },
       { slug: 'movimentacoes', label: 'Movimentações', title: 'Movimentações' },
@@ -46,6 +55,7 @@ const modules = [
     path: 'boletim',
     title: 'Boletim',
     description: 'Lançamento e fechamento da produção diária.',
+    roles: ['BOLETIM', 'ADMIN'],
     pages: [
       { slug: 'publicacoes', label: 'Publicações', title: 'Publicações' },
       { slug: 'comunicados', label: 'Comunicados', title: 'Comunicados' },
@@ -55,6 +65,7 @@ const modules = [
     path: 'bi',
     title: 'BI',
     description: 'Indicadores para decisão operacional.',
+    roles: ['BI', 'GESTOR', 'ADMIN'],
     pages: [
       { slug: 'indicadores', label: 'Indicadores', title: 'Indicadores' },
       { slug: 'relatorios', label: 'Relatórios', title: 'Relatórios' },
@@ -64,6 +75,7 @@ const modules = [
     path: 'usuarios',
     title: 'Usuários',
     description: 'Acessos, perfis e convites da operação.',
+    roles: ['ADMIN'],
     pages: [
       { slug: 'lista', label: 'Lista de usuários', title: 'Lista de usuários' },
       { slug: 'convites', label: 'Convites', title: 'Convites' },
@@ -73,6 +85,7 @@ const modules = [
     path: 'configuracoes',
     title: 'Configurações',
     description: 'Preferências e integrações do portal.',
+    roles: ['ADMIN'],
     pages: [
       { slug: 'preferencias', label: 'Preferências', title: 'Preferências' },
       { slug: 'integracoes', label: 'Integrações', title: 'Integrações' },
@@ -82,8 +95,10 @@ const modules = [
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <SessionExpiryNotice />
         <Routes>
           <Route 
             path="/login" 
@@ -99,10 +114,12 @@ function App() {
               <Navigate to="/compras" replace />
             } 
           />
+          <Route path="/acesso-negado" element={<PrivateRoute><AccessDeniedPage /></PrivateRoute>} />
           <Route
             path="/agendamentos"
             element={
               <PrivateRoute>
+                <RoleRoute roles={['COMPRAS', 'ARMAZEM', 'PORTARIA', 'ADMIN']}>
                 <AppLayout>
                   <ModuleLayout
                     title="Agendamentos"
@@ -113,6 +130,7 @@ function App() {
                     ]}
                   />
                 </AppLayout>
+                </RoleRoute>
               </PrivateRoute>
             }
           >
@@ -133,6 +151,7 @@ function App() {
                 path={`/${module.path}`}
                 element={
                   <PrivateRoute>
+                    <RoleRoute roles={module.roles}>
                     <AppLayout>
                       <ModuleLayout
                         title={module.title}
@@ -140,6 +159,7 @@ function App() {
                         menuItems={menuItems}
                       />
                     </AppLayout>
+                    </RoleRoute>
                   </PrivateRoute>
                 }
               >
@@ -158,8 +178,9 @@ function App() {
           })}
           <Route path="/" element={<Navigate to="/compras" replace />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

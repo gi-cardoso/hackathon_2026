@@ -1,7 +1,7 @@
 .login-page { display: grid; min-height: 100dvh; background: var(--surface); }
 .login-left { align-items: center; background: var(--blue-900); color: var(--white); display: none; justify-content: center; min-height: 100dvh; padding: var(--space-5); position: relative; text-align: center; }
-.login-left::before { background: var(--white); border-radius: var(--radius-md); color: var(--blue-900); content: 'COCAPEC'; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; letter-spacing: 0.08em; padding: var(--space-3) var(--space-4); position: absolute; top: 35%; }
-.login-left h1 { opacity: 0; }
+.login-left > .cocapec-logo { max-width: min(80%, 420px); }
+.login-left h1 { display: none; }
 .login-left p { color: var(--white); margin-top: 12rem; }
 .login-right { align-items: center; display: flex; justify-content: center; padding: var(--space-4); }
 .login-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); max-width: 440px; padding: clamp(1.4rem, 5vw, 2.5rem); width: 100%; }

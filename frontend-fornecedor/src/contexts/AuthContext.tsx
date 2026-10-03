@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { api } from '../services/api';
 
 interface Fornecedor {
@@ -20,16 +20,16 @@ interface AuthContextData {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [fornecedor, setFornecedor] = useState<Fornecedor | null>(null);
-
-  useEffect(() => {
+  const [fornecedor, setFornecedor] = useState<Fornecedor | null>(() => {
     const storagedFornecedor = localStorage.getItem('@COCAPEC_FORNECEDOR:user');
     const storagedToken = localStorage.getItem('@COCAPEC_FORNECEDOR:token');
-
-    if (storagedFornecedor && storagedToken) {
-      setFornecedor(JSON.parse(storagedFornecedor));
+    if (!storagedFornecedor || !storagedToken) return null;
+    try {
+      return JSON.parse(storagedFornecedor) as Fornecedor;
+    } catch {
+      return null;
     }
-  }, []);
+  });
 
   const signIn = async (cnpj: string, senha: string) => {
     // Remove formatting from CNPJ to send only numbers

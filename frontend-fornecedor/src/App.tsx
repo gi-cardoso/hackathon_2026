@@ -9,6 +9,8 @@ import {
 } from './features/agendamentos/pages';
 import DashboardFornecedor from './pages/DashboardFornecedor';
 import LoginFornecedor from './pages/LoginFornecedor';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { SessionExpiryNotice } from './components/SessionExpiryNotice';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -22,8 +24,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <SessionExpiryNotice />
         <Routes>
           <Route path="/login" element={<PublicRoute><LoginFornecedor /></PublicRoute>} />
           <Route element={<PrivateRoute><PortalFornecedorLayout /></PrivateRoute>}>
@@ -36,8 +40,9 @@ function App() {
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

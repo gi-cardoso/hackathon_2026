@@ -1,5 +1,6 @@
 .sidebar-container { background: var(--blue-900); color: var(--white); display: flex; flex: 0 0 260px; flex-direction: column; min-height: 100dvh; width: 260px; }
-.sidebar-logo { align-items: center; background: var(--white); border-radius: var(--radius-sm); color: var(--blue-900); display: flex; font-size: 1.15rem; font-weight: 900; letter-spacing: 0.08em; margin: var(--space-3); min-height: 48px; justify-content: center; }
+.sidebar-logo { align-items: center; display: flex; justify-content: center; margin: var(--space-3); min-height: 64px; padding: var(--space-2); }
+.cocapec-logo { display: block; height: var(--logo-height); max-width: 100%; object-fit: contain; width: auto; }
 .sidebar-nav { flex: 1; overflow-y: auto; padding: var(--space-2) var(--space-2); }
 .sidebar-nav ul { display: grid; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
 .sidebar-nav li { margin: 0; }

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Logo } from '../components/Logo';
+import { getApiError } from '../services/api';
 import './LoginFornecedor.css';
 
 export default function LoginFornecedor() {
@@ -106,12 +108,8 @@ export default function LoginFornecedor() {
       setTimeout(() => {
         navigate('/dashboard');
       }, 500);
-    } catch (error: any) {
-      if (error.response?.data?.error) {
-        setErrorMsg(error.response.data.error);
-      } else {
-        setErrorMsg('Erro de conexão com o servidor. Tente novamente mais tarde.');
-      }
+    } catch (error: unknown) {
+      setErrorMsg(getApiError(error));
     } finally {
       setIsLoading(false);
     }
@@ -120,14 +118,14 @@ export default function LoginFornecedor() {
   return (
     <div className="login-page">
       <div className="login-left">
-        <h1>COCAPEC</h1>
+        <Logo variant="full-dark" height="clamp(48px, 8vw, 86px)" />
         <p>Rede Integrada de Fornecedores</p>
       </div>
 
       <div className="login-right">
         <div className="login-card">
           <div className="login-header">
-            <div className="login-brand">COCAPEC</div>
+            <div className="login-brand"><Logo variant="full" height="clamp(34px, 5vw, 48px)" /></div>
             <div className="login-subtitle">Portal do Fornecedor</div>
           </div>
 

@@ -1,5 +1,5 @@
 .app-header { align-items: center; background: var(--white); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; min-height: 72px; padding: var(--space-2) clamp(1rem, 3vw, 2rem); }
-.header-title { color: var(--blue-900); font-size: 1.05rem; font-weight: 900; }
+.header-title { align-items: center; color: var(--blue-900); display: flex; font-size: 1.05rem; font-weight: 900; gap: var(--space-2); }
 .header-user { align-items: center; color: var(--muted); display: flex; font-size: 0.9rem; gap: var(--space-2); min-width: 0; }
 .header-user span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .btn-logout { background: transparent; border: 1px solid #E9A5A5; border-radius: var(--radius-xs); color: var(--danger); cursor: pointer; min-height: 44px; padding: 0 var(--space-2); }

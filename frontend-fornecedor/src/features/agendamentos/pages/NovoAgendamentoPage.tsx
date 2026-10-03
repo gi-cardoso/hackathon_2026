@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Stepper } from '../../../components/ui/Stepper';
-import { createAgendamento, getAvailability, uploadInvoice } from '../../../services/api';
+import { createAgendamento, getApiError, getAvailability, uploadInvoice } from '../../../services/api';
 import type { AvailabilitySlot, InvoiceData } from '../../../services/api';
 import '../../../components/ui/ui.css';
 import '../styles.css';
@@ -24,13 +23,6 @@ function getToday() {
   return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 }
 
-function getApiError(error: unknown) {
-  if (axios.isAxiosError<{ error?: string; details?: string }>(error)) {
-    return error.response?.data?.error || error.response?.data?.details || 'Não foi possível concluir a operação.';
-  }
-  return 'Não foi possível concluir a operação.';
-}
-
 export function NovoAgendamentoPage() {
   const [step, setStep] = useState<FormStep>(1);
   const [file, setFile] = useState<File | null>(null);
@@ -46,7 +38,6 @@ export function NovoAgendamentoPage() {
 
   useEffect(() => {
     if (!data || !acondicionamento) {
-      setSlots([]);
       return;
     }
     let active = true;
@@ -112,9 +103,9 @@ export function NovoAgendamentoPage() {
 
       {step === 1 && <Card className="fornecedor-wizard-card"><h3>1. Envie a nota fiscal</h3><p>PDF ou XML de até 15 MB. Nós extraímos os dados para você conferir.</p><input ref={fileInputRef} type="file" accept=".pdf,.xml,application/pdf,application/xml,text/xml,application/x-xml" onChange={handleFileChange} disabled={loading} />{file && <p className="fornecedor-file-name">{file.name}</p>}<Button type="button" loading={loading} onClick={() => fileInputRef.current?.click()}>{file ? 'Trocar arquivo' : 'Selecionar arquivo'}</Button></Card>}
 
-      {step === 2 && <Card className="fornecedor-wizard-card"><h3>2. Como a carga chega?</h3><div className="fornecedor-choice-grid">{acondicionamentos.map((option) => <button key={option.value} className={`fornecedor-choice ${acondicionamento === option.value ? 'is-selected' : ''}`} type="button" onClick={() => { setAcondicionamento(option.value); setStep(3); }}><strong>{option.title}</strong><span>{option.description}</span></button>)}</div><Button type="button" variant="ghost" onClick={() => setStep(1)}>Voltar</Button></Card>}
+      {step === 2 && <Card className="fornecedor-wizard-card"><h3>2. Como a carga chega?</h3><div className="fornecedor-choice-grid">{acondicionamentos.map((option) => <button key={option.value} className={`fornecedor-choice ${acondicionamento === option.value ? 'is-selected' : ''}`} type="button" onClick={() => { setAcondicionamento(option.value); setSlots([]); setStep(3); }}><strong>{option.title}</strong><span>{option.description}</span></button>)}</div><Button type="button" variant="ghost" onClick={() => setStep(1)}>Voltar</Button></Card>}
 
-      {step === 3 && <Card className="fornecedor-wizard-card"><h3>3. Escolha data e horário</h3><div className="fornecedor-form-group"><label htmlFor="data">Data da entrega</label><input id="data" type="date" min={getToday()} value={data} onChange={(event) => { setData(event.target.value); setHorario(''); }} /></div><div className="fornecedor-slot-grid" aria-live="polite">{loadingSlots ? <p>Consultando disponibilidade...</p> : slots.map((slot) => <button key={slot.horario} type="button" disabled={!slot.disponivel} className={`fornecedor-slot ${slot.disponivel ? 'is-available' : 'is-occupied'} ${horario === slot.horario ? 'is-selected' : ''}`} onClick={() => setHorario(slot.horario)}><strong>{slot.horario}</strong><span>{slot.disponivel ? `${slot.vagas_restantes} vaga(s)` : 'Ocupado'}</span></button>)}</div><div className="fornecedor-wizard-actions"><Button type="button" variant="ghost" onClick={() => setStep(2)}>Voltar</Button><Button type="button" disabled={!data || !horario} onClick={() => setStep(4)}>Continuar</Button></div></Card>}
+      {step === 3 && <Card className="fornecedor-wizard-card"><h3>3. Escolha data e horário</h3><div className="fornecedor-form-group"><label htmlFor="data">Data da entrega</label><input id="data" type="date" min={getToday()} value={data} onChange={(event) => { setData(event.target.value); setHorario(''); setSlots([]); }} /></div><div className="fornecedor-slot-grid" aria-live="polite">{loadingSlots ? <p>Consultando disponibilidade...</p> : slots.map((slot) => <button key={slot.horario} type="button" disabled={!slot.disponivel} className={`fornecedor-slot ${slot.disponivel ? 'is-available' : 'is-occupied'} ${horario === slot.horario ? 'is-selected' : ''}`} onClick={() => setHorario(slot.horario)}><strong>{slot.horario}</strong><span>{slot.disponivel ? `${slot.vagas_restantes} vaga(s)` : 'Ocupado'}</span></button>)}</div><div className="fornecedor-wizard-actions"><Button type="button" variant="ghost" onClick={() => setStep(2)}>Voltar</Button><Button type="button" disabled={!data || !horario} onClick={() => setStep(4)}>Continuar</Button></div></Card>}
 
       {step === 4 && <Card className="fornecedor-wizard-card"><h3>4. Revise antes de confirmar</h3><dl className="fornecedor-agendamento-summary"><div><dt>Nota fiscal</dt><dd>{file?.name}</dd></div><div><dt>Operação</dt><dd>{invoice?.identificacao?.naturezaOperacao || 'Recebimento'}</dd></div><div><dt>Acondicionamento</dt><dd>{acondicionamentos.find((item) => item.value === acondicionamento)?.title}</dd></div><div><dt>Data e horário</dt><dd>{data} às {horario}</dd></div></dl><div className="fornecedor-wizard-actions"><Button type="button" variant="ghost" onClick={() => setStep(3)}>Editar</Button><Button type="button" loading={loading} onClick={() => void handleSubmit()}>Confirmar agendamento</Button></div></Card>}
     </section>

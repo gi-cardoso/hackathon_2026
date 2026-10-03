@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { api } from '../services/api';
 
 interface User {
@@ -20,16 +20,16 @@ interface AuthContextData {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
+  const [user, setUser] = useState<User | null>(() => {
     const storagedUser = localStorage.getItem('@COCAPEC:user');
     const storagedToken = localStorage.getItem('@COCAPEC:token');
-
-    if (storagedUser && storagedToken) {
-      setUser(JSON.parse(storagedUser));
+    if (!storagedUser || !storagedToken) return null;
+    try {
+      return JSON.parse(storagedUser) as User;
+    } catch {
+      return null;
     }
-  }, []);
+  });
 
   const signIn = async (email: string, senha: string) => {
     const response = await api.post('/auth/internal/login', { email, senha });
