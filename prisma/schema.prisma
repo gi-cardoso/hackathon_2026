@@ -257,14 +257,19 @@ model BoletimDiario {
 }
 
 model ItemBoletim {
-  id_item_boletim    Int     @id @default(autoincrement())
-  id_boletim         Int?
-  tipo_servico       String
-  quantidade         Decimal
-  preco_unitario     Decimal
-  valor_producao     Decimal
+  id_item_boletim Int    @id @default(autoincrement())
+  id_boletim      Int?
+  tipo_servico    String
 
-  boletim            BoletimDiario? @relation(fields: [id_boletim], references: [id_boletim])
+  qtd_descarga      Decimal @default(0)
+  qtd_remocao       Decimal @default(0)
+  qtd_transferencia Decimal @default(0)
+
+  quantidade     Decimal
+  preco_unitario Decimal
+  valor_producao Decimal
+
+  boletim BoletimDiario? @relation(fields: [id_boletim], references: [id_boletim])
 
   @@map("item_boletim")
 }

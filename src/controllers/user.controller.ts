@@ -26,7 +26,10 @@ export class UserController {
       return res.status(201).json(userSemSenha);
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
-      return res.status(500).json({ error: "Erro interno no servidor" });
+
+      return res.status(500).json({
+        error: "Erro interno no servidor",
+      });
     }
   }
 
@@ -40,7 +43,10 @@ export class UserController {
       return res.json(safeUsers);
     } catch (error) {
       console.error("Erro ao listar usuários:", error);
-      return res.status(500).json({ error: "Erro interno no servidor" });
+
+      return res.status(500).json({
+        error: "Erro interno no servidor",
+      });
     }
   }
 
@@ -53,14 +59,19 @@ export class UserController {
 
       const user = await prisma.usuario.findUnique({ where: { id_usuario } });
       if (!user) {
-        return res.status(404).json({ error: "Usuário não encontrado" });
+        return res.status(404).json({
+          error: "Usuário não encontrado",
+        });
       }
 
       const { senha_hash, ...userSemSenha } = user;
       return res.json(userSemSenha);
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
-      return res.status(500).json({ error: "Erro interno no servidor" });
+
+      return res.status(500).json({
+        error: "Erro interno no servidor",
+      });
     }
   }
 
@@ -78,7 +89,9 @@ export class UserController {
 
       const user = await prisma.usuario.findUnique({ where: { id_usuario } });
       if (!user) {
-        return res.status(404).json({ error: "Usuário não encontrado" });
+        return res.status(404).json({
+          error: "Usuário não encontrado",
+        });
       }
 
       await prisma.usuario.delete({ where: { id_usuario } });
@@ -86,7 +99,10 @@ export class UserController {
       return res.status(204).send();
     } catch (error) {
       console.error("Erro ao deletar usuário:", error);
-      return res.status(500).json({ error: "Erro interno no servidor" });
+
+      return res.status(500).json({
+        error: "Erro interno no servidor",
+      });
     }
   }
 }
