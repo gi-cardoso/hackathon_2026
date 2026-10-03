@@ -149,11 +149,22 @@
   font-size: 0.9rem;
   color: #475569;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  outline: none;
 }
 
 .user-dropdown-item:hover {
-  background-color: #f8fafc;
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.user-dropdown-item:focus-visible {
+  box-shadow: inset 0 0 0 2px #38bdf8;
+  background-color: #f1f5f9;
+}
+
+.user-dropdown-item:active {
+  background-color: #e2e8f0;
 }
 
 .text-danger {
@@ -161,6 +172,14 @@
 }
 .text-danger:hover {
   background-color: #fef2f2;
+  color: #dc2626;
+}
+.text-danger:focus-visible {
+  box-shadow: inset 0 0 0 2px #f87171;
+  background-color: #fef2f2;
+}
+.text-danger:active {
+  background-color: #fee2e2;
 }
 
 /* Responsividade */

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
@@ -11,8 +11,34 @@ export function Header({ onToggleSidebar }: HeaderProps) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isMenuOpen]);
 
   const handleLogout = () => {
+    setIsMenuOpen(false);
     signOut();
     navigate('/login');
   };
@@ -53,7 +79,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
         </button>
 
         {/* User Menu */}
-        <div className="header-user-menu">
+        <div className="header-user-menu" ref={menuRef}>
           <button 
             className="user-menu-btn" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -70,6 +96,7 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             <div className="user-dropdown">
               <div className="user-dropdown-header">
                 <strong>{user?.nome || 'Usuário Autenticado'}</strong>
+                <span className="user-email" style={{ textTransform: 'none' }}>{user?.email || 'email@exemplo.com'}</span>
                 <span>{user?.role || 'Perfil Indefinido'}</span>
               </div>
               <ul className="user-dropdown-list">
