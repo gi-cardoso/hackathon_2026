@@ -1,12 +1,15 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { TimeSlotGrid } from '../components/TimeSlotGrid';
 import { getTemporaryTimeSlots } from '../data/temporaryTimeSlots';
+import { uploadInvoice } from '../../../services/api';
 import '../styles.css';
 
 type FormStep = 'form' | 'review' | 'confirmed';
 type FormErrors = Partial<Record<'notaFiscal' | 'acondicionamento' | 'data' | 'horario', string>>;
+type InvoiceUploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 
 const acondicionamentos = ['Batido/Solto', 'Paletizado/Sacaria', 'Big Bag'];
 
@@ -27,6 +30,13 @@ function formatDate(date: string) {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date(`${date}T00:00:00`));
 }
 
+function getInvoiceUploadError(error: unknown) {
+  if (axios.isAxiosError<{ error?: string; details?: string }>(error)) {
+    return error.response?.data?.details || error.response?.data?.error || 'Não foi possível enviar a nota fiscal.';
+  }
+  return 'Não foi possível enviar a nota fiscal. Tente novamente.';
+}
+
 export function NovoAgendamentoPage() {
   const [step, setStep] = useState<FormStep>('form');
   const [notaFiscal, setNotaFiscal] = useState<File | null>(null);
@@ -34,8 +44,11 @@ export function NovoAgendamentoPage() {
   const [data, setData] = useState('');
   const [horario, setHorario] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
+  const [invoiceUploadStatus, setInvoiceUploadStatus] = useState<InvoiceUploadStatus>('idle');
+  const [invoiceUploadData, setInvoiceUploadData] = useState<unknown>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timeSlots = getTemporaryTimeSlots(data, acondicionamento);
+  const isUploadingInvoice = invoiceUploadStatus === 'uploading';
 
   const validate = () => {
     const nextErrors: FormErrors = {};
@@ -56,12 +69,32 @@ export function NovoAgendamentoPage() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
     setNotaFiscal(file);
+    setInvoiceUploadStatus('idle');
+    setInvoiceUploadData(null);
     setErrors((current) => ({ ...current, notaFiscal: undefined }));
   };
 
-  const handleContinue = (event: FormEvent<HTMLFormElement>) => {
+  const handleContinue = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (validate()) setStep('review');
+    if (!validate() || !notaFiscal || isUploadingInvoice) return;
+
+    if (invoiceUploadStatus === 'success' && invoiceUploadData !== null) {
+      setStep('review');
+      return;
+    }
+
+    setInvoiceUploadStatus('uploading');
+    setErrors((current) => ({ ...current, notaFiscal: undefined }));
+
+    try {
+      const responseData = await uploadInvoice(notaFiscal);
+      setInvoiceUploadData(responseData);
+      setInvoiceUploadStatus('success');
+      setStep('review');
+    } catch (error) {
+      setInvoiceUploadStatus('error');
+      setErrors((current) => ({ ...current, notaFiscal: getInvoiceUploadError(error) }));
+    }
   };
 
   const resetForm = () => {
@@ -71,6 +104,8 @@ export function NovoAgendamentoPage() {
     setData('');
     setHorario('');
     setErrors({});
+    setInvoiceUploadStatus('idle');
+    setInvoiceUploadData(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -79,7 +114,7 @@ export function NovoAgendamentoPage() {
       <section className="fornecedor-agendamentos-page fornecedor-confirmation" aria-labelledby="confirmation-title">
         <p className="fornecedor-step-label">Confirmação visual</p>
         <h2 id="confirmation-title">Revisão concluída</h2>
-        <p>O fluxo foi confirmado apenas nesta tela. Nenhum agendamento foi enviado, salvo ou persistido.</p>
+        <p>O fluxo foi confirmado apenas nesta tela. O agendamento não foi enviado, salvo ou persistido.</p>
         <div className="fornecedor-confirmation-actions">
           <button className="fornecedor-button" type="button" onClick={resetForm}>Criar outro agendamento</button>
           <Link className="fornecedor-button fornecedor-button-secondary" to="/agendamentos">Voltar para meus agendamentos</Link>
@@ -100,7 +135,7 @@ export function NovoAgendamentoPage() {
           <div><dt>Data</dt><dd>{formatDate(data)}</dd></div>
           <div><dt>Horário</dt><dd>{horario}</dd></div>
         </dl>
-        <p className="fornecedor-local-notice">A confirmação abaixo apenas demonstra o fluxo no frontend; nenhum dado será persistido.</p>
+        <p className="fornecedor-local-notice">A nota fiscal foi processada pela API. O agendamento ainda não foi enviado ou persistido.</p>
         <div className="fornecedor-confirmation-actions">
           <button className="fornecedor-button fornecedor-button-secondary" type="button" onClick={() => setStep('form')}>Editar informações</button>
           <button className="fornecedor-button" type="button" onClick={() => setStep('confirmed')}>Confirmar visualmente</button>
@@ -114,7 +149,7 @@ export function NovoAgendamentoPage() {
       <Link className="fornecedor-back-link" to="/agendamentos">← Meus agendamentos</Link>
       <p className="fornecedor-step-label">Etapa 1 de 2 · Dados do agendamento</p>
       <h2 id="new-appointment-title">Novo agendamento</h2>
-      <p className="fornecedor-agendamentos-description">Informe os dados para revisar o agendamento. Nenhum arquivo ou informação será enviado nesta etapa.</p>
+      <p className="fornecedor-agendamentos-description">Informe os dados para revisar o agendamento. A nota fiscal será enviada ao avançar.</p>
 
       <form className="fornecedor-agendamento-form" onSubmit={handleContinue} noValidate>
         <div className="fornecedor-form-group">
@@ -124,18 +159,32 @@ export function NovoAgendamentoPage() {
             name="nota-fiscal"
             type="file"
             ref={fileInputRef}
-            accept=".pdf,.xml,.jpg,.jpeg,.png,application/pdf,application/xml,text/xml,image/*"
+            accept=".pdf,.xml,application/pdf,application/xml,text/xml,application/x-xml"
             onChange={handleFileChange}
+            disabled={isUploadingInvoice}
             aria-invalid={Boolean(errors.notaFiscal)}
             aria-describedby={errors.notaFiscal ? 'nota-fiscal-error' : 'nota-fiscal-help'}
           />
-          <small id="nota-fiscal-help">O arquivo permanece somente neste navegador e não será enviado ao servidor.</small>
+          <small id="nota-fiscal-help">Envie um arquivo XML ou PDF de até 15 MB.</small>
           {notaFiscal && (
             <div className="fornecedor-file-selected">
               <div><strong>{notaFiscal.name}</strong><span>{formatFileSize(notaFiscal.size)}</span></div>
-              <button type="button" onClick={() => { setNotaFiscal(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}>Remover arquivo</button>
+              <button
+                type="button"
+                disabled={isUploadingInvoice}
+                onClick={() => {
+                  setNotaFiscal(null);
+                  setInvoiceUploadStatus('idle');
+                  setInvoiceUploadData(null);
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
+              >
+                Remover arquivo
+              </button>
             </div>
           )}
+          {isUploadingInvoice && <span className="fornecedor-upload-status" role="status">Enviando nota fiscal...</span>}
+          {invoiceUploadStatus === 'success' && <span className="fornecedor-upload-status fornecedor-upload-status-success" role="status">Nota fiscal enviada com sucesso.</span>}
           {errors.notaFiscal && <span className="fornecedor-field-error" id="nota-fiscal-error">{errors.notaFiscal}</span>}
         </div>
 
@@ -189,7 +238,9 @@ export function NovoAgendamentoPage() {
         />
         <input type="hidden" name="horario" value={horario} />
         {errors.horario && <span className="fornecedor-field-error" id="horario-error">{errors.horario}</span>}
-        <button className="fornecedor-button" type="submit">Continuar para revisão</button>
+        <button className="fornecedor-button" type="submit" disabled={isUploadingInvoice}>
+          {isUploadingInvoice ? 'Enviando nota fiscal...' : 'Continuar para revisão'}
+        </button>
       </form>
     </section>
   );

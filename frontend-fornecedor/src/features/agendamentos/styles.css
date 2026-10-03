@@ -41,6 +41,12 @@
   color: white;
 }
 
+.fornecedor-button:disabled {
+  background: #94a3b8;
+  border-color: #94a3b8;
+  cursor: not-allowed;
+}
+
 .fornecedor-button-disabled,
 .fornecedor-button-disabled:hover {
   background: #94a3b8;
@@ -233,6 +239,21 @@
   font: inherit;
   font-weight: 600;
   padding: var(--spacing-xs);
+}
+
+.fornecedor-file-selected button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.fornecedor-upload-status {
+  color: var(--color-info);
+  font-size: 0.875rem;
+}
+
+.fornecedor-upload-status-success {
+  color: var(--color-primary-dark);
+  font-weight: 600;
 }
 
 .fornecedor-step-label {
