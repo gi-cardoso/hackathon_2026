@@ -1,0 +1,75 @@
+@baseUrl = http://localhost:3000/api
+@emailCocapec = admin@empresa.com
+@senhaCocapec = 123
+
+@cnpjFornecedor = 12345678901234
+@senhaFornecedor = 123456
+
+##################################################
+# LOGIN COCAPEC (Usuário Interno)
+##################################################
+
+### 4.1 Sucesso: Deve autenticar corretamente
+# @name LoginCocapec
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "{{emailCocapec}}",
+  "senha": "{{senhaCocapec}}"
+}
+
+### 4.2 Erro: Email inexistente
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "inexistente@empresa.com",
+  "senha": "{{senhaCocapec}}"
+}
+
+### 4.3 Erro: Senha incorreta
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "{{emailCocapec}}",
+  "senha": "senha_incorreta_123"
+}
+
+### 4.4 Erro: Email vazio
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "",
+  "senha": "{{senhaCocapec}}"
+}
+
+### 4.5 Erro: Senha vazia
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "{{emailCocapec}}",
+  "senha": ""
+}
+
+### 4.6 Erro: Email inválido
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "email_invalido_sem_arroba",
+  "senha": "{{senhaCocapec}}"
+}
+
+### 6. Erro: Tentativa de Autenticação Cruzada (Fornecedor tentando usar Login COCAPEC)
+# Passando CNPJ e senha do Fornecedor num endpoint que espera Email e Senha de funcionário interno
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "cnpj": "{{cnpjFornecedor}}",
+  "senha": "{{senhaFornecedor}}"
+}

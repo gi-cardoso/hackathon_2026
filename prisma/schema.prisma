@@ -1,3 +1,12 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 model Fornecedor {
   id_fornecedor               Int    @id @default(autoincrement())
   codigo_fornecedor_cocapec   String? @unique

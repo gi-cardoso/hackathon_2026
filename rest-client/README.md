@@ -15,16 +15,29 @@ Em casos futuros, quando rotas estiverem protegidas, você deve definir `@token 
 
 ## Ordem Recomendada
 1. Execute **02-health.http** para confirmar que o sistema está no ar.
-2. Execute **00-auth.http** para testar as capacidades de login. (Pegue o token daqui para uso manual em testes que exigirem, futuramente).
+2. Execute **00-auth/01-login-cocapec.http** para testar as capacidades de login do usuário interno. (Pegue o token daqui para uso manual em testes que exigirem, futuramente).
 3. Execute **01-usuarios.http** para criar, buscar e deletar usuários. Aconselha-se atualizar a variável `@id_usuario` baseada no ID retornado após a criação de um usuário.
 
 ## Arquivos Disponíveis
-* `00-auth.http`: Contém as chamadas relativas ao controlador de autenticação, englobando testes de sucesso no login interno e retornos de erro de validação/credenciais.
+* `00-auth/01-login-cocapec.http`: Contém as chamadas para autenticação de funcionário (COCAPEC).
+* `00-auth/02-login-fornecedor.http`: Contém as chamadas para autenticação de fornecedor (CNPJ + Senha).
+* `00-auth/03-jwt-e-autorizacao.http`: Contém testes genéricos que exigem injeção de JWT.
 * `01-usuarios.http`: Contém todas as operações de CRUD da rota `/api/users`. Mapeia requisições `POST`, `GET`, `PUT` e `DELETE`, incluindo fluxos para ID inexistente e a validação do endpoint `PUT` (atualmente retornando 501 Não implementado).
 * `02-health.http`: Contém chamadas para os endpoints não versionados ou públicos do sistema (Health Check, Root URL e validação de 404).
+
+## Dados de Teste Necessários no Banco
+Para que os testes de autenticação não retornem "Credenciais Inválidas" de imediato, assegure-se de cadastrar previamente na base os seguintes registros através do arquivo `01-usuarios.http`:
+**COCAPEC**
+- email: admin@empresa.com
+- senha: 123
+
+**FORNECEDOR**
+- CNPJ: (Ainda não implementado no schema, os testes de login de fornecedor retornarão código 404 - veja em Problemas Conhecidos).
+
 
 ## Problemas Conhecidos Identificados (Issue Tracking)
 De acordo com os requisitos de auditoria e validação desta suíte, identificou-se o seguinte:
 
 - **Segurança nas Rotas de Usuário**: Atualmente, as rotas sob o módulo `/api/users` não se encontram integradas com o `AuthMiddleware`. Como não há middleware de proteção instanciado no `user.routes.ts`, as requisições estão **públicas**. Os arquivos do REST Client foram implementados baseados na *realidade* da arquitetura sem falsificar *headers* falsos de JWT, uma vez que a regra de negócio não deveria ser tocada.
+- **Login de Fornecedor**: Por restrições estritas de não alterar o Schema do banco de dados (o modelo `Fornecedor` não comporta o campo `senha_hash`), o controller não possui funcionalidade ativa para login via `/auth/fornecedor/login`. Sendo assim, o arquivo de testes reflete este impedimento recebendo `404 Not Found`, mantendo as garantias e validações das regras do sistema.
 - **Autorização (RBAC)**: Uma vez que as rotas estão públicas, não foi possível estruturar testes de Perfil/Autorização diretamente sobre módulos de negócio, devendo estes testes serem adicionados no futuro, quando os guardas forem devidamente ativados sobre os domínios.

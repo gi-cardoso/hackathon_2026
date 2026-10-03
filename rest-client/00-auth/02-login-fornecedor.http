@@ -1,0 +1,78 @@
+@baseUrl = http://localhost:3000/api
+@cnpjFornecedor = 12345678901234
+@senhaFornecedor = 123456
+
+@emailCocapec = admin@empresa.com
+@senhaCocapec = 123
+
+##################################################
+# LOGIN FORNECEDOR
+# NOTA: O endpoint /auth/fornecedor/login não existe
+# porque foi bloqueado por restrições de schema do banco.
+# Sendo assim, estes testes retornarão 404 Not Found, o que reflete a realidade do backend atual.
+##################################################
+
+### 5.1 Sucesso (Esperado 404): CNPJ e senha válidos
+# @name LoginFornecedor
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "cnpj": "{{cnpjFornecedor}}",
+  "senha": "{{senhaFornecedor}}"
+}
+
+### 5.2 Erro (Esperado 404): CNPJ inexistente
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "cnpj": "99999999999999",
+  "senha": "{{senhaFornecedor}}"
+}
+
+### 5.3 Erro (Esperado 404): Senha incorreta
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "cnpj": "{{cnpjFornecedor}}",
+  "senha": "senha_errada"
+}
+
+### 5.4 Erro (Esperado 404): CNPJ vazio
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "cnpj": "",
+  "senha": "{{senhaFornecedor}}"
+}
+
+### 5.5 Erro (Esperado 404): Senha vazia
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "cnpj": "{{cnpjFornecedor}}",
+  "senha": ""
+}
+
+### 5.6 Erro (Esperado 404): CNPJ inválido (não atende a regra de formatação)
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "cnpj": "ABC",
+  "senha": "{{senhaFornecedor}}"
+}
+
+### 6. Erro (Esperado 404): Tentativa de Autenticação Cruzada (COCAPEC tentando usar Login FORNECEDOR)
+# Passando Email e senha de funcionário interno num endpoint que espera CNPJ de fornecedor
+POST {{baseUrl}}/auth/fornecedor/login
+Content-Type: application/json
+
+{
+  "email": "{{emailCocapec}}",
+  "senha": "{{senhaCocapec}}"
+}

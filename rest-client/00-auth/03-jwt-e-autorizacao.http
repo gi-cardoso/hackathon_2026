@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:3000/api
+
+# Você deve rodar os logins nos arquivos anteriores, copiar os tokens JWT retornados e colá-los aqui:
+@tokenCocapec = COLOQUE_SEU_TOKEN_COCAPEC_AQUI
+@tokenFornecedor = COLOQUE_SEU_TOKEN_FORNECEDOR_AQUI
+
+##################################################
+# TESTES DE ACESSO E AUTORIZAÇÃO COM JWT
+# Como não há rotas reais da API devidamente protegidas ainda, utilizaremos as rotas de usuários que deverão ser protegidas futuramente, mas os testes abaixo ilustram as expectativas caso o middleware fosse aplicado.
+##################################################
+
+### 8. Sucesso: Acesso com JWT COCAPEC
+GET {{baseUrl}}/users
+Authorization: Bearer {{tokenCocapec}}
+
+### 9. Sucesso: Acesso com JWT FORNECEDOR
+# Dependendo da rota, o fornecedor deve ter ou não permissão. Para fins de teste genérico (ex: listar notas fiscais do fornecedor que ainda não existe).
+GET {{baseUrl}}/users
+Authorization: Bearer {{tokenFornecedor}}
+
+### 10. Erro: Acesso com JWT Inválido (malformado/forjado)
+GET {{baseUrl}}/users
+Authorization: Bearer um_token_completamente_invalido_12345
+
+### 11. Erro: Acesso sem JWT
+GET {{baseUrl}}/users
+
+### 12. Erro: JWT Expirado
+# Substitua pela string de um token que você sabe que já expirou
+GET {{baseUrl}}/users
+Authorization: Bearer JWT_EXPIRADO_AQUI
