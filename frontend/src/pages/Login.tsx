@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Login.css';
 
 export default function Login() {
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +42,7 @@ export default function Login() {
     return isValid;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -46,17 +51,21 @@ export default function Login() {
 
     setIsLoading(true);
 
-    // Mocking an API call delay
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // Simulating a fake validation response (e.g. valid credentials only if admin)
-      if (email === 'admin@cocapec.com.br' && password === 'admin123') {
-        setSuccessMsg('Login realizado com sucesso! Redirecionando...');
+    try {
+      await signIn(email, password);
+      setSuccessMsg('Login realizado com sucesso! Redirecionando...');
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 500);
+    } catch (error: any) {
+      if (error.response?.data?.error) {
+        setErrorMsg(error.response.data.error);
       } else {
-        setErrorMsg('Credenciais inválidas. Tente novamente.');
+        setErrorMsg('Erro de conexão com o servidor. Tente novamente mais tarde.');
       }
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
