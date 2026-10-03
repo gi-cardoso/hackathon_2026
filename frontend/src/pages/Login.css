@@ -103,6 +103,22 @@
   background-color: white;
 }
 
+.form-input.invalid {
+  border-color: var(--color-error);
+  background-color: #fff5f5;
+}
+
+.form-input.invalid:focus {
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.2);
+}
+
+.input-error-text {
+  color: var(--color-error);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: block;
+}
+
 .login-options {
   display: flex;
   justify-content: flex-end;
@@ -124,4 +140,52 @@
   width: 100%;
   padding: 0.875rem;
   font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-primary:disabled:hover {
+  box-shadow: none;
+}
+
+.alert {
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.alert-error {
+  background-color: #fff5f5;
+  color: var(--color-error);
+  border: 1px solid #feb2b2;
+}
+
+.alert-success {
+  background-color: #f0fff4;
+  color: var(--color-success);
+  border: 1px solid #9ae6b4;
+}
+
+/* Spinner Animation */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
