@@ -1,0 +1,26 @@
+.agendamentos-intro {
+  margin-bottom: 20px !important;
+}
+
+.agendamentos-placeholder {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 20px;
+}
+
+.agendamentos-placeholder h3 {
+  color: #334155;
+  font-size: 1rem;
+  margin: 0 0 6px;
+}
+
+.agendamentos-placeholder p {
+  color: #64748b;
+}
+
+.agendamentos-back-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-weight: 600;
+}

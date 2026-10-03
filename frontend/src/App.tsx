@@ -5,6 +5,11 @@ import Login from './pages/Login';
 import { ModuleLayout, TemporaryPage } from './pages/ModulePage';
 import type { ModuleMenuItem } from './components/ModuleHeader';
 import { AppLayout } from './components/layout/AppLayout';
+import {
+  AgendaOperacionalPage,
+  AgendamentoDetailPage,
+  AgendamentosListPage,
+} from './features/agendamentos/pages';
 import './App.css';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -93,6 +98,28 @@ function App() {
               <Navigate to="/compras" replace />
             } 
           />
+          <Route
+            path="/agendamentos"
+            element={
+              <PrivateRoute>
+                <AppLayout>
+                  <ModuleLayout
+                    title="Agendamentos"
+                    description="Acompanhamento e organização dos agendamentos de entrega."
+                    menuItems={[
+                      { label: 'Lista de agendamentos', path: '/agendamentos/lista' },
+                      { label: 'Agenda operacional', path: '/agendamentos/agenda-operacional' },
+                    ]}
+                  />
+                </AppLayout>
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<Navigate to="lista" replace />} />
+            <Route path="lista" element={<AgendamentosListPage />} />
+            <Route path="agenda-operacional" element={<AgendaOperacionalPage />} />
+            <Route path=":id" element={<AgendamentoDetailPage />} />
+          </Route>
           {modules.map((module) => {
             const menuItems: ModuleMenuItem[] = module.pages.map((page) => ({
               label: page.label,

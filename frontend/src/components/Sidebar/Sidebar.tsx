@@ -16,6 +16,11 @@ export function Sidebar() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/agendamentos" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              Agendamentos
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/armazem" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
               Armazém
             </NavLink>
