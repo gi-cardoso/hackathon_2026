@@ -10,8 +10,18 @@ import '../styles.css';
 type FormStep = 'form' | 'review' | 'confirmed';
 type FormErrors = Partial<Record<'notaFiscal' | 'acondicionamento' | 'data' | 'horario', string>>;
 type InvoiceUploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+type AcondicionamentoVisual = 'Batido/Solto' | 'Paletizado/Sacaria' | 'Big Bag';
+type AcondicionamentoApi = 'BATIDO' | 'PALETIZADO' | 'BIG_BAG';
 
-const acondicionamentos = ['Batido/Solto', 'Paletizado/Sacaria', 'Big Bag'];
+const acondicionamentos: Array<{ label: AcondicionamentoVisual; apiValue: AcondicionamentoApi }> = [
+  { label: 'Batido/Solto', apiValue: 'BATIDO' },
+  { label: 'Paletizado/Sacaria', apiValue: 'PALETIZADO' },
+  { label: 'Big Bag', apiValue: 'BIG_BAG' },
+];
+
+function mapAcondicionamentoToApi(value: string): AcondicionamentoApi | '' {
+  return acondicionamentos.find((option) => option.label === value)?.apiValue ?? '';
+}
 
 function getToday() {
   const now = new Date();
@@ -40,7 +50,7 @@ function getInvoiceUploadError(error: unknown) {
 export function NovoAgendamentoPage() {
   const [step, setStep] = useState<FormStep>('form');
   const [notaFiscal, setNotaFiscal] = useState<File | null>(null);
-  const [acondicionamento, setAcondicionamento] = useState('');
+  const [acondicionamento, setAcondicionamento] = useState<AcondicionamentoVisual | ''>('');
   const [data, setData] = useState('');
   const [horario, setHorario] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
@@ -48,13 +58,14 @@ export function NovoAgendamentoPage() {
   const [invoiceUploadData, setInvoiceUploadData] = useState<unknown>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const timeSlots = getTemporaryTimeSlots(data, acondicionamento);
+  const tipoAcondicionamentoApi = mapAcondicionamentoToApi(acondicionamento);
   const isUploadingInvoice = invoiceUploadStatus === 'uploading';
 
   const validate = () => {
     const nextErrors: FormErrors = {};
 
     if (!notaFiscal) nextErrors.notaFiscal = 'Selecione o arquivo da nota fiscal.';
-    if (!acondicionamento) nextErrors.acondicionamento = 'Selecione o tipo de acondicionamento.';
+    if (!tipoAcondicionamentoApi) nextErrors.acondicionamento = 'Selecione o tipo de acondicionamento.';
     if (!data) {
       nextErrors.data = 'Selecione a data do agendamento.';
     } else if (data < getToday()) {
@@ -195,7 +206,8 @@ export function NovoAgendamentoPage() {
             name="acondicionamento"
             value={acondicionamento}
             onChange={(event) => {
-              setAcondicionamento(event.target.value);
+              const selectedOption = acondicionamentos.find((option) => option.label === event.target.value);
+              setAcondicionamento(selectedOption?.label ?? '');
               setHorario('');
               setErrors((current) => ({ ...current, acondicionamento: undefined, horario: undefined }));
             }}
@@ -203,7 +215,7 @@ export function NovoAgendamentoPage() {
             aria-describedby={errors.acondicionamento ? 'acondicionamento-error' : undefined}
           >
             <option value="" disabled>Selecione uma opção</option>
-            {acondicionamentos.map((option) => <option key={option} value={option}>{option}</option>)}
+            {acondicionamentos.map((option) => <option key={option.apiValue} value={option.label}>{option.label}</option>)}
           </select>
           {errors.acondicionamento && <span className="fornecedor-field-error" id="acondicionamento-error">{errors.acondicionamento}</span>}
         </div>
@@ -237,6 +249,7 @@ export function NovoAgendamentoPage() {
           }}
         />
         <input type="hidden" name="horario" value={horario} />
+        <input type="hidden" name="tipo_acondicionamento" value={tipoAcondicionamentoApi} />
         {errors.horario && <span className="fornecedor-field-error" id="horario-error">{errors.horario}</span>}
         <button className="fornecedor-button" type="submit" disabled={isUploadingInvoice}>
           {isUploadingInvoice ? 'Enviando nota fiscal...' : 'Continuar para revisão'}
