@@ -1,3 +1,5 @@
+import './PageContent.css';
+
 export function PageContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="page-content">

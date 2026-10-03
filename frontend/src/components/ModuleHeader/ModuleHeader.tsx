@@ -14,17 +14,17 @@ interface ModuleHeaderProps {
 
 export function ModuleHeader({ title, description, menuItems = [] }: ModuleHeaderProps) {
   return (
-    <div className="module-header-container">
+    <header className="module-header-container">
       <div className="module-header-info">
         <h1 className="module-title">{title}</h1>
         {description && <p className="module-description">{description}</p>}
       </div>
 
       {menuItems.length > 0 && (
-        <nav className="module-header-nav">
+        <nav className="module-header-nav" aria-label={`Funcionalidades de ${title}`}>
           <ul className="module-menu-list">
-            {menuItems.map((item, index) => (
-              <li key={index} className="module-menu-item">
+            {menuItems.map((item) => (
+              <li key={item.path} className="module-menu-item">
                 <NavLink 
                   to={item.path} 
                   className={({ isActive }) => `module-menu-link ${isActive ? 'active' : ''}`}
@@ -37,6 +37,6 @@ export function ModuleHeader({ title, description, menuItems = [] }: ModuleHeade
           </ul>
         </nav>
       )}
-    </div>
+    </header>
   );
 }

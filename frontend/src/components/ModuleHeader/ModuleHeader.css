@@ -1,6 +1,6 @@
 .module-header-container {
   background-color: #ffffff;
-  padding: 24px 32px 0 32px;
+  padding: 24px 32px 0;
   border-bottom: 1px solid #e2e8f0;
   margin-bottom: 24px;
 }
@@ -71,4 +71,23 @@
   color: #0ea5e9;
   border-bottom-color: #0ea5e9;
   font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .module-header-container {
+    padding: 20px 16px 0;
+    margin-bottom: 16px;
+  }
+
+  .module-header-info {
+    margin-bottom: 16px;
+  }
+
+  .module-title {
+    font-size: 1.5rem;
+  }
+
+  .module-menu-list {
+    gap: 16px;
+  }
 }

@@ -1,6 +1,7 @@
 .sidebar-container {
   width: 260px;
   height: 100vh;
+  flex: 0 0 260px;
   background-color: #1e293b;
   color: #f8fafc;
   display: flex;
@@ -73,19 +74,10 @@
   font-weight: 600;
 }
 
-.sidebar-footer {
-  padding: 20px 12px;
-  border-top: 1px solid #334155;
-}
-
-.sidebar-footer .sidebar-link:hover {
-  background-color: #ef4444;
-  color: #ffffff;
-}
-
 /* Responsividade */
 @media (max-width: 768px) {
   .sidebar-container {
+    flex: 0 0 auto;
     width: 100%;
     height: auto;
     flex-direction: row;
@@ -96,14 +88,27 @@
   .sidebar-logo {
     border-bottom: none;
     padding: 16px;
+    white-space: nowrap;
   }
 
   .sidebar-nav {
-    display: none; /* Ocultar em mobile por enquanto ou usar menu hamburguer */
+    display: block;
+    min-width: 0;
+    overflow-x: auto;
+    padding: 8px 0;
   }
 
-  .sidebar-footer {
-    border-top: none;
-    padding: 16px;
+  .sidebar-nav ul {
+    flex-direction: row;
+    width: max-content;
   }
+
+  .sidebar-nav li {
+    padding: 0;
+  }
+
+  .sidebar-link {
+    white-space: nowrap;
+  }
+
 }

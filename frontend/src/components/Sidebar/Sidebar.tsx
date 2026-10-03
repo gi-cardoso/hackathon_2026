@@ -3,12 +3,12 @@ import './Sidebar.css';
 
 export function Sidebar() {
   return (
-    <aside className="sidebar-container">
+    <aside className="sidebar-container" aria-label="Navegação principal">
       <div className="sidebar-logo">
         COCAPEC
       </div>
       
-      <nav className="sidebar-nav">
+      <nav className="sidebar-nav" aria-label="Módulos">
         <ul>
           <li>
             <NavLink to="/compras" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
@@ -43,13 +43,6 @@ export function Sidebar() {
         </ul>
       </nav>
 
-      <div className="sidebar-footer">
-        <NavLink to="/login" className="sidebar-link" onClick={() => {
-          // A lógica de logout pode ser acionada externamente ou mantida simples para o layout
-        }}>
-          Sair
-        </NavLink>
-      </div>
     </aside>
   );
 }
