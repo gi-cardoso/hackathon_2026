@@ -69,4 +69,27 @@ export class AuthMiddleware {
     }
     return next();
   }
+
+  static hasRole(allowedRoles: string[]) {
+    return (req: Request, res: Response, next: NextFunction) => {
+      // Garantir que a identidade existe
+      if (!req.user) {
+        return res.status(401).json({ error: "Usuário não autenticado." });
+      }
+
+      // Se for fornecedor, rejeitar sumariamente
+      if (req.user.tipo === "FORNECEDOR") {
+        return res.status(403).json({ error: "Acesso negado. Fornecedores não possuem permissões internas." });
+      }
+
+      // Como o tipo é interno, podemos acessar a role seguramente
+      const internalUser = req.user as JwtPayloadInterno;
+
+      if (!allowedRoles.includes(internalUser.role)) {
+        return res.status(403).json({ error: "Acesso negado. Permissão insuficiente." });
+      }
+
+      return next();
+    };
+  }
 }
