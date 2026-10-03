@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export class AuthController {
   static async internalLogin(req: Request, res: Response) {
@@ -36,11 +37,23 @@ export class AuthController {
       // Remover o hash da resposta para segurança
       const { senha_hash, ...usuarioSemSenha } = usuario;
 
+      // Gerar JWT
+      const secret = process.env.JWT_SECRET || "default_secret";
+      const token = jwt.sign(
+        {
+          sub: usuario.id_usuario,
+          tipo: "INTERNO",
+          role: usuario.role,
+        },
+        secret,
+        { expiresIn: "1h" }
+      );
+
       // Autenticar usuário
       return res.json({
         message: "Login realizado com sucesso",
         user: usuarioSemSenha,
-        // token: será implementado em etapa posterior
+        token,
       });
     } catch (error) {
       console.error("Erro no login interno:", error);
