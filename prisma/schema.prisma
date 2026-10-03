@@ -1,18 +1,257 @@
-generator client {
-  provider = "prisma-client-js"
+model Fornecedor {
+  id_fornecedor               Int    @id @default(autoincrement())
+  codigo_fornecedor_cocapec   String? @unique
+  nome_fornecedor             String
+  cnpj                        String? @unique
+  contato                     String?
+  ativo                       Boolean
+
+  notas_fiscais               NotaFiscal[]
+  agendamentos                Agendamento[]
+
+  @@map("fornecedores")
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model NotaFiscal {
+  id_nota        Int     @id @default(autoincrement())
+  id_fornecedor  Int?
+  numero_nf      String
+  chave_acesso   String  @db.VarChar(44)
+  arquivo_nf     String?
+
+  fornecedor     Fornecedor?   @relation(fields: [id_fornecedor], references: [id_fornecedor])
+  agendamentos   Agendamento[]
+
+  @@map("nota_fiscal")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Agendamento {
+  id_agendamento          Int      @id @default(autoincrement())
+  id_fornecedor           Int?
+  id_nota                 Int?
+  numero_pedido_compra    String?
+  data_agendada           DateTime @db.Date
+  horario_agendado        String
+  tipo_acondicionamento   String
+  status_agendamento      String
 
-  @@map("users")
+  fornecedor              Fornecedor?     @relation(fields: [id_fornecedor], references: [id_fornecedor])
+  nota_fiscal             NotaFiscal?     @relation(fields: [id_nota], references: [id_nota])
+
+  validacoes              Validacao[]
+  cargas                  Carga[]
+  recebimentos            Recebimento[]
+  nao_recebimentos        NaoRecebimento[]
+
+  @@map("agendamentos")
+}
+
+model Usuario {
+  id_usuario      Int     @id @default(autoincrement())
+  nome            String
+  matricula       String
+  email           String
+  senha_hash      String
+  ativo           Boolean
+  role            String
+
+  validacoes      Validacao[]
+  boletins        BoletimDiario[]
+
+  @@map("usuario")
+}
+
+model Validacao {
+  id_validacao     Int    @id @default(autoincrement())
+  id_agendamento   Int?
+  tipo_validacao   String
+  status           String
+  responsavel_id   Int?
+
+  agendamento      Agendamento? @relation(fields: [id_agendamento], references: [id_agendamento])
+  responsavel      Usuario?     @relation(fields: [responsavel_id], references: [id_usuario])
+
+  @@map("validacao")
+}
+
+model Carga {
+  id_carga                 Int     @id @default(autoincrement())
+  id_agendamento           Int?
+  peso_total               Decimal
+  tipo_acondicionamento    String
+
+  agendamento              Agendamento?  @relation(fields: [id_agendamento], references: [id_agendamento])
+
+  itens                    ItemCarga[]
+  destinos                 CargaDestino[]
+
+  @@map("carga")
+}
+
+model CargaDestino {
+  id_carga      Int
+  id_armazem    Int
+
+  carga         Carga   @relation(fields: [id_carga], references: [id_carga])
+  armazem       Armazem @relation(fields: [id_armazem], references: [id_armazem])
+
+  @@id([id_carga, id_armazem])
+  @@map("carga_destino")
+}
+
+model ItemCarga {
+  id_item_carga          Int     @id @default(autoincrement())
+  id_carga               Int?
+  codigo_item_cocapec    String
+  descricao_item         String
+  quantidade             Decimal
+  codigo_deposito        String?
+
+  carga                  Carga? @relation(fields: [id_carga], references: [id_carga])
+
+  @@map("item_carga")
+}
+
+model NaoRecebimento {
+  id                  Int     @id @default(autoincrement())
+  id_agendamento      Int?
+  motivo_padronizado  String
+  observacao          String? @db.Text
+
+  agendamento         Agendamento? @relation(fields: [id_agendamento], references: [id_agendamento])
+
+  @@map("nao_recebimento")
+}
+
+model Recebimento {
+  id_recebimento       Int       @id @default(autoincrement())
+  id_agendamento       Int?
+  hora_chegada         DateTime
+  hora_entrada         DateTime?
+  hora_saida           DateTime?
+  status_recebimento   String
+
+  agendamento          Agendamento? @relation(fields: [id_agendamento], references: [id_agendamento])
+  descargas            Descarga[]
+
+  @@map("recebimento")
+}
+
+model Armazem {
+  id_armazem         Int     @id @default(autoincrement())
+  nome_armazem       String
+  codigo_deposito    String? @unique
+  grupo              String
+  ativo              Boolean
+
+  cargas_destino     CargaDestino[]
+  descargas          Descarga[]
+  boletins           BoletimDiario[]
+
+  @@map("armazem")
+}
+
+model Descarga {
+  id_descarga               Int     @id @default(autoincrement())
+  id_recebimento            Int?
+  id_armazem                Int?
+  quantidade_movimentada    Decimal
+  qtd_chapas_utilizados     Int
+
+  recebimento               Recebimento? @relation(fields: [id_recebimento], references: [id_recebimento])
+  armazem                   Armazem?     @relation(fields: [id_armazem], references: [id_armazem])
+
+  chapas                    DescargaChapa[]
+  equipamentos              DescargaEquipamento[]
+
+  @@map("descarga")
+}
+
+model Chapa {
+  matricula_chapa    String  @id
+  nome               String
+  ativo              Boolean
+
+  descargas          DescargaChapa[]
+  equipes            EquipeDiaria[]
+
+  @@map("chapa")
+}
+
+model Equipamento {
+  id_tipo_equipamento      Int     @id @default(autoincrement())
+  nome                     String
+  armazem_base             String?
+  quantidade_disponivel    Int
+  ativo                    Boolean
+
+  descargas                DescargaEquipamento[]
+
+  @@map("equipamento")
+}
+
+model DescargaChapa {
+  id_descarga        Int
+  matricula_chapa    String
+
+  descarga           Descarga @relation(fields: [id_descarga], references: [id_descarga])
+  chapa              Chapa    @relation(fields: [matricula_chapa], references: [matricula_chapa])
+
+  @@id([id_descarga, matricula_chapa])
+  @@map("descarga_chapa")
+}
+
+model DescargaEquipamento {
+  id_descarga            Int
+  id_tipo_equipamento    Int
+  quantidade_utilizada   Int
+
+  descarga               Descarga     @relation(fields: [id_descarga], references: [id_descarga])
+  equipamento            Equipamento  @relation(fields: [id_tipo_equipamento], references: [id_tipo_equipamento])
+
+  @@id([id_descarga, id_tipo_equipamento])
+  @@map("descarga_equipamento")
+}
+
+model BoletimDiario {
+  id_boletim                  Int     @id @default(autoincrement())
+  id_armazem                  Int?
+  data                        DateTime @db.Date
+  responsavel_id              Int?
+  diarias_equivalentes_total  Decimal
+  valor_produzido_total       Decimal
+  complemento_diaria_pago     Decimal
+
+  armazem                     Armazem? @relation(fields: [id_armazem], references: [id_armazem])
+  responsavel                 Usuario? @relation(fields: [responsavel_id], references: [id_usuario])
+
+  itens                       ItemBoletim[]
+  equipes                     EquipeDiaria[]
+
+  @@map("boletim_diario")
+}
+
+model ItemBoletim {
+  id_item_boletim    Int     @id @default(autoincrement())
+  id_boletim         Int?
+  tipo_servico       String
+  quantidade         Decimal
+  preco_unitario     Decimal
+  valor_producao     Decimal
+
+  boletim            BoletimDiario? @relation(fields: [id_boletim], references: [id_boletim])
+
+  @@map("item_boletim")
+}
+
+model EquipeDiaria {
+  id                Int    @id @default(autoincrement())
+  id_boletim        Int?
+  matricula_chapa   String?
+  tipo_jornada      String
+
+  boletim           BoletimDiario? @relation(fields: [id_boletim], references: [id_boletim])
+  chapa             Chapa?        @relation(fields: [matricula_chapa], references: [matricula_chapa])
+
+  @@map("equipe_diaria")
 }
