@@ -120,7 +120,13 @@ function App() {
                   <Route
                     key={page.slug}
                     path={page.slug}
-                    element={<TemporaryPage title={page.title} />}
+                    element={
+                      <TemporaryPage
+                        modulePath={module.path}
+                        moduleTitle={module.title}
+                        title={page.title}
+                      />
+                    }
                   />
                 ))}
               </Route>
