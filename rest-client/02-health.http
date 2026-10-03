@@ -1,0 +1,14 @@
+@baseUrl = http://localhost:3000
+
+##################################################
+# HEALTH & MISC
+##################################################
+
+### Sucesso: Deve retornar mensagem da rota raiz
+GET {{baseUrl}}/
+
+### Sucesso: Deve retornar informações de health
+GET {{baseUrl}}/api/health
+
+### Erro: Deve retornar 404 para rota que não existe
+GET {{baseUrl}}/api/rota-que-nao-existe

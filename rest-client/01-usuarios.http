@@ -1,0 +1,73 @@
+@baseUrl = http://localhost:3000/api
+# NOTA: Como nenhuma das rotas de usuário está protegida pelo AuthMiddleware nas rotas atuais do sistema, 
+# estes testes não utilizam o cabeçalho Authorization para que reflitam a realidade.
+# Isso foi anotado no README.md.
+
+##################################################
+# USUÁRIOS
+##################################################
+
+### Sucesso: Deve listar usuários
+GET {{baseUrl}}/users
+
+### Sucesso: Deve criar usuário com sucesso
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "novo_usuario@empresa.com",
+  "nome": "Novo Usuário",
+  "matricula": "999",
+  "senha": "123",
+  "role": "ADMIN",
+  "ativo": true
+}
+
+### Erro: Deve rejeitar dados inválidos/ausentes na criação
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "nome": "Usuário Incompleto"
+}
+
+### Erro: Deve retornar conflito (409) para email já cadastrado
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "novo_usuario@empresa.com",
+  "nome": "Usuário Duplicado",
+  "matricula": "999",
+  "senha": "123",
+  "role": "ADMIN"
+}
+
+### Sucesso: Deve buscar usuário pelo ID
+# Substitua o ID pelo ID retornado na requisição de criação
+@id_usuario = 1
+GET {{baseUrl}}/users/{{id_usuario}}
+
+### Erro: Deve retornar erro para ID inválido na busca
+GET {{baseUrl}}/users/abc
+
+### Erro: Deve retornar erro para usuário inexistente na busca
+GET {{baseUrl}}/users/999999
+
+### Endpoint Não Implementado (501): Deve retornar que a atualização não foi implementada
+PUT {{baseUrl}}/users/{{id_usuario}}
+Content-Type: application/json
+
+{
+  "nome": "Nome Atualizado"
+}
+
+### Sucesso: Deve excluir usuário existente
+# Atenção: Após rodar esse delete, os requests que dependem deste ID passarão a dar erro 404
+DELETE {{baseUrl}}/users/{{id_usuario}}
+
+### Erro: Deve retornar erro (404) ao excluir usuário inexistente
+DELETE {{baseUrl}}/users/999999
+
+### Erro: Deve retornar erro (400) ao enviar ID inválido para exclusão
+DELETE {{baseUrl}}/users/invalido

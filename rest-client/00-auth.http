@@ -1,0 +1,41 @@
+@baseUrl = http://localhost:3000/api
+
+##################################################
+# AUTENTICAÇÃO
+##################################################
+
+### Sucesso: Deve realizar login do usuário interno com sucesso
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "admin@empresa.com",
+  "senha": "123"
+}
+
+### Erro: Deve rejeitar dados inválidos/vazios
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "",
+  "senha": ""
+}
+
+### Erro: Deve retornar erro para e-mail não cadastrado
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "inexistente999@empresa.com",
+  "senha": "123"
+}
+
+### Erro: Deve retornar erro para senha incorreta
+POST {{baseUrl}}/auth/internal/login
+Content-Type: application/json
+
+{
+  "email": "admin@empresa.com",
+  "senha": "senha_incorreta"
+}
