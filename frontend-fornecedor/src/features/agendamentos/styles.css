@@ -113,6 +113,84 @@
   border-color: var(--color-error);
 }
 
+.fornecedor-time-slot-grid {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin: 0;
+  padding: var(--spacing-md);
+}
+
+.fornecedor-time-slot-grid legend {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  padding: 0 var(--spacing-xs);
+}
+
+.fornecedor-time-slot-grid-help {
+  font-size: 0.875rem;
+  margin: 0 0 var(--spacing-md);
+}
+
+.fornecedor-time-slot-list {
+  display: grid;
+  gap: var(--spacing-sm);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.fornecedor-time-slot {
+  align-items: flex-start;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  display: grid;
+  gap: 4px;
+  min-height: 142px;
+  padding: var(--spacing-md);
+  text-align: left;
+}
+
+.fornecedor-time-slot:hover:not(:disabled),
+.fornecedor-time-slot.is-selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgb(22 101 52 / 15%);
+}
+
+.fornecedor-time-slot:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+.fornecedor-time-slot-time {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.fornecedor-time-slot-status {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.fornecedor-time-slot-description {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.fornecedor-time-slot-available {
+  border-top: 4px solid #15803d;
+}
+
+.fornecedor-time-slot-partially-occupied {
+  border-top: 4px solid #ca8a04;
+}
+
+.fornecedor-time-slot-occupied,
+.fornecedor-time-slot-unavailable {
+  border-top: 4px solid #b91c1c;
+}
+
 .fornecedor-field-error {
   color: var(--color-error);
   font-size: 0.875rem;
@@ -269,5 +347,14 @@
 
   .fornecedor-agendamento-summary div:last-child {
     border-bottom: 0;
+  }
+
+  .fornecedor-time-slot-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fornecedor-time-slot {
+    min-height: 130px;
+    padding: var(--spacing-sm);
   }
 }

@@ -1,13 +1,14 @@
 import { useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import { TimeSlotGrid } from '../components/TimeSlotGrid';
+import { getTemporaryTimeSlots } from '../data/temporaryTimeSlots';
 import '../styles.css';
 
 type FormStep = 'form' | 'review' | 'confirmed';
 type FormErrors = Partial<Record<'notaFiscal' | 'acondicionamento' | 'data' | 'horario', string>>;
 
 const acondicionamentos = ['Batido/Solto', 'Paletizado/Sacaria', 'Big Bag'];
-const horarios = ['08:00', '10:00', '13:00', '15:00'];
 
 function getToday() {
   const now = new Date();
@@ -34,6 +35,7 @@ export function NovoAgendamentoPage() {
   const [horario, setHorario] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const timeSlots = getTemporaryTimeSlots(data, acondicionamento);
 
   const validate = () => {
     const nextErrors: FormErrors = {};
@@ -143,7 +145,11 @@ export function NovoAgendamentoPage() {
             id="acondicionamento"
             name="acondicionamento"
             value={acondicionamento}
-            onChange={(event) => { setAcondicionamento(event.target.value); setErrors((current) => ({ ...current, acondicionamento: undefined })); }}
+            onChange={(event) => {
+              setAcondicionamento(event.target.value);
+              setHorario('');
+              setErrors((current) => ({ ...current, acondicionamento: undefined, horario: undefined }));
+            }}
             aria-invalid={Boolean(errors.acondicionamento)}
             aria-describedby={errors.acondicionamento ? 'acondicionamento-error' : undefined}
           >
@@ -162,29 +168,27 @@ export function NovoAgendamentoPage() {
               type="date"
               min={getToday()}
               value={data}
-              onChange={(event) => { setData(event.target.value); setErrors((current) => ({ ...current, data: undefined })); }}
+              onChange={(event) => {
+                setData(event.target.value);
+                setHorario('');
+                setErrors((current) => ({ ...current, data: undefined, horario: undefined }));
+              }}
               aria-invalid={Boolean(errors.data)}
               aria-describedby={errors.data ? 'data-error' : undefined}
             />
             {errors.data && <span className="fornecedor-field-error" id="data-error">{errors.data}</span>}
           </div>
-          <div className="fornecedor-form-group">
-            <label htmlFor="horario">Horário</label>
-            <select
-              id="horario"
-              name="horario"
-              value={horario}
-              onChange={(event) => { setHorario(event.target.value); setErrors((current) => ({ ...current, horario: undefined })); }}
-              aria-invalid={Boolean(errors.horario)}
-              aria-describedby={errors.horario ? 'horario-error' : 'horario-help'}
-            >
-              <option value="" disabled>Selecione um horário</option>
-              {horarios.map((option) => <option key={option} value={option}>{option}</option>)}
-            </select>
-            <small id="horario-help">Todos os horários são exibidos como disponíveis nesta etapa.</small>
-            {errors.horario && <span className="fornecedor-field-error" id="horario-error">{errors.horario}</span>}
-          </div>
         </div>
+        <TimeSlotGrid
+          slots={timeSlots}
+          selectedTime={horario}
+          onSelect={(time) => {
+            setHorario(time);
+            setErrors((current) => ({ ...current, horario: undefined }));
+          }}
+        />
+        <input type="hidden" name="horario" value={horario} />
+        {errors.horario && <span className="fornecedor-field-error" id="horario-error">{errors.horario}</span>}
         <button className="fornecedor-button" type="submit">Continuar para revisão</button>
       </form>
     </section>
