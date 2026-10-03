@@ -10,8 +10,8 @@ describe("POST /api/auth/internal/login", () => {
   const originalCompare = bcrypt.compare;
 
   afterEach(() => {
-    prisma.usuario.findFirst = originalFindFirst;
-    bcrypt.compare = originalCompare;
+    (prisma.usuario as any).findFirst = originalFindFirst;
+    (bcrypt as any).compare = originalCompare;
   });
 
   it("deve retornar erro 400 se email ou senha não forem fornecidos", async () => {
@@ -24,7 +24,7 @@ describe("POST /api/auth/internal/login", () => {
   });
 
   it("deve retornar 401 para usuário não encontrado", async () => {
-    prisma.usuario.findFirst = async () => null as any;
+    (prisma.usuario as any).findFirst = async () => null;
 
     const res = await request(app).post("/api/auth/internal/login").send({
       email: "inexistente@empresa.com",
@@ -36,13 +36,13 @@ describe("POST /api/auth/internal/login", () => {
   });
 
   it("deve retornar 403 para usuário inativo", async () => {
-    prisma.usuario.findFirst = async () => ({
+    (prisma.usuario as any).findFirst = async () => ({
       id_usuario: 1,
       nome: "Inativo",
       email: "inativo@empresa.com",
       ativo: false,
       senha_hash: "hash",
-    }) as any;
+    });
 
     const res = await request(app).post("/api/auth/internal/login").send({
       email: "inativo@empresa.com",
@@ -54,15 +54,15 @@ describe("POST /api/auth/internal/login", () => {
   });
 
   it("deve retornar 401 para senha incorreta", async () => {
-    prisma.usuario.findFirst = async () => ({
+    (prisma.usuario as any).findFirst = async () => ({
       id_usuario: 1,
       nome: "Ativo",
       email: "ativo@empresa.com",
       ativo: true,
       senha_hash: "hash_real",
-    }) as any;
+    });
     
-    bcrypt.compare = async () => false as any;
+    (bcrypt as any).compare = async () => false;
 
     const res = await request(app).post("/api/auth/internal/login").send({
       email: "ativo@empresa.com",
@@ -74,7 +74,7 @@ describe("POST /api/auth/internal/login", () => {
   });
 
   it("deve autenticar o usuário com sucesso com senha correta", async () => {
-    prisma.usuario.findFirst = async () => ({
+    (prisma.usuario as any).findFirst = async () => ({
       id_usuario: 1,
       nome: "Admin",
       matricula: "001",
@@ -82,9 +82,9 @@ describe("POST /api/auth/internal/login", () => {
       ativo: true,
       role: "ADMIN",
       senha_hash: "hash_real",
-    }) as any;
+    });
     
-    bcrypt.compare = async () => true as any;
+    (bcrypt as any).compare = async () => true;
 
     const res = await request(app).post("/api/auth/internal/login").send({
       email: "admin@empresa.com",
