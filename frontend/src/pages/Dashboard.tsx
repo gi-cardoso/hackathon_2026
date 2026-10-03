@@ -1,16 +1,23 @@
 import { useAuth } from '../contexts/AuthContext';
 import { AppLayout } from '../components/layout/AppLayout';
-import { ModuleHeader } from '../components/layout/ModuleHeader';
+import { ModuleHeader } from '../components/ModuleHeader';
 import { PageContent } from '../components/layout/PageContent';
 
 export default function Dashboard() {
   const { user } = useAuth();
 
+  const menuItems = [
+    { label: 'Visão Geral', path: '/dashboard' },
+    { label: 'Relatórios', path: '/dashboard/relatorios' }
+  ];
+
   return (
     <AppLayout>
-      <ModuleHeader title="Dashboard Principal">
-        <button className="btn-primary" style={{ padding: '8px 15px', background: '#3498db', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Ação do Módulo</button>
-      </ModuleHeader>
+      <ModuleHeader 
+        title="Dashboard Principal" 
+        description="Painel de controle geral do sistema."
+        menuItems={menuItems}
+      />
       
       <PageContent>
         <p>Bem-vindo ao portal interno da COCAPEC.</p>
