@@ -248,6 +248,7 @@ export function NovoAgendamentoPage() {
             setErrors((current) => ({ ...current, horario: undefined }));
           }}
         />
+        <input type="hidden" name="data_agendada" value={data} />
         <input type="hidden" name="horario" value={horario} />
         <input type="hidden" name="tipo_acondicionamento" value={tipoAcondicionamentoApi} />
         {errors.horario && <span className="fornecedor-field-error" id="horario-error">{errors.horario}</span>}
