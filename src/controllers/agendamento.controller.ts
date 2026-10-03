@@ -45,6 +45,24 @@ export class AgendamentoController {
     }
   }
 
+  static async listMine(req: Request, res: Response) {
+    const idFornecedor = req.currentFornecedorId;
+    if (!idFornecedor) {
+      return res.status(401).json({ error: "Fornecedor não identificado." });
+    }
+
+    try {
+      const agendamentos = await AgendamentoService.listByFornecedor(
+        prisma,
+        idFornecedor,
+      );
+      return res.json(agendamentos);
+    } catch (error) {
+      console.error("Erro ao listar agendamentos do fornecedor:", error);
+      return res.status(500).json({ error: "Erro interno no servidor." });
+    }
+  }
+
   static async listForPurchasing(req: Request, res: Response) {
     try {
       const agendamentos = await AgendamentoService.listForPurchasing(prisma);

@@ -257,6 +257,18 @@ export class AgendamentoService {
     });
   }
 
+  static async listByFornecedor(prisma: PrismaClient, idFornecedor: number) {
+    return prisma.agendamento.findMany({
+      where: { id_fornecedor: idFornecedor },
+      include: ANALISE_INCLUDE,
+      orderBy: [
+        { data_agendada: "desc" },
+        { horario_agendado: "desc" },
+        { id_agendamento: "desc" },
+      ],
+    });
+  }
+
   static async decide(
     prisma: PrismaClient,
     id: number,

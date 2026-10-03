@@ -19,6 +19,14 @@ agendamentoRouter.get(
 );
 
 agendamentoRouter.get(
+  "/me",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.enforceFornecedorIdentity,
+  AuthMiddleware.isFornecedor,
+  AgendamentoController.listMine,
+);
+
+agendamentoRouter.get(
   "/analise/compras",
   AuthMiddleware.verifyToken,
   AuthMiddleware.hasRole(["COMPRAS", "ADMIN"]),
