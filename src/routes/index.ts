@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { userRouter } from "./user.routes";
+import { authRouter } from "./auth.routes";
 
 const router = Router();
 
@@ -11,6 +12,9 @@ router.get("/health", (req, res) => {
     uptime: process.uptime(),
   });
 });
+
+// Auth routes
+router.use("/auth", authRouter);
 
 // User routes
 router.use("/users", userRouter);

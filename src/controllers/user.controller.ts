@@ -1,116 +1,87 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
+import bcrypt from "bcryptjs";
 
 export class UserController {
-  // Criar um novo usuário
   static async create(req: Request, res: Response) {
     try {
-      const { email, name } = req.body;
+      const { email, nome, matricula, senha, role, ativo } = req.body;
 
-      if (!email || !name) {
-        return res.status(400).json({ error: "Email e nome são obrigatórios" });
+      if (!email || !nome || !matricula || !senha || !role) {
+        return res.status(400).json({ error: "Campos obrigatórios ausentes" });
       }
 
-      const existingUser = await prisma.user.findUnique({ where: { email } });
+      const existingUser = await prisma.usuario.findFirst({ where: { email } });
       if (existingUser) {
         return res.status(409).json({ error: "Email já cadastrado" });
       }
 
-      const user = await prisma.user.create({
-        data: { email, name },
+      const senha_hash = await bcrypt.hash(senha, 10);
+
+      const user = await prisma.usuario.create({
+        data: { email, nome, matricula, senha_hash, role, ativo: ativo ?? true },
       });
 
-      return res.status(201).json(user);
+      const { senha_hash: _, ...userSemSenha } = user;
+      return res.status(201).json(userSemSenha);
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
       return res.status(500).json({ error: "Erro interno no servidor" });
     }
   }
 
-  // Listar todos os usuários
   static async getAll(req: Request, res: Response) {
     try {
-      const users = await prisma.user.findMany({
-        orderBy: { createdAt: "desc" },
+      const users = await prisma.usuario.findMany();
+      const safeUsers = users.map(u => {
+        const { senha_hash, ...rest } = u;
+        return rest;
       });
-      return res.json(users);
+      return res.json(safeUsers);
     } catch (error) {
       console.error("Erro ao listar usuários:", error);
       return res.status(500).json({ error: "Erro interno no servidor" });
     }
   }
 
-  // Obter um usuário por ID
   static async getById(req: Request, res: Response) {
     try {
-      const id = parseInt(String(req.params.id), 10);
-      if (isNaN(id)) {
+      const id_usuario = parseInt(String(req.params.id), 10);
+      if (isNaN(id_usuario)) {
         return res.status(400).json({ error: "ID inválido" });
       }
 
-      const user = await prisma.user.findUnique({ where: { id } });
+      const user = await prisma.usuario.findUnique({ where: { id_usuario } });
       if (!user) {
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
 
-      return res.json(user);
+      const { senha_hash, ...userSemSenha } = user;
+      return res.json(userSemSenha);
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
       return res.status(500).json({ error: "Erro interno no servidor" });
     }
   }
 
-  // Atualizar um usuário
   static async update(req: Request, res: Response) {
-    try {
-      const id = parseInt(String(req.params.id), 10);
-      const { email, name } = req.body;
-
-      if (isNaN(id)) {
-        return res.status(400).json({ error: "ID inválido" });
-      }
-
-      const existingUser = await prisma.user.findUnique({ where: { id } });
-      if (!existingUser) {
-        return res.status(404).json({ error: "Usuário não encontrado" });
-      }
-
-      if (email && email !== existingUser.email) {
-        const emailInUse = await prisma.user.findUnique({ where: { email } });
-        if (emailInUse) {
-          return res.status(409).json({ error: "Email já está em uso" });
-        }
-      }
-
-      const updatedUser = await prisma.user.update({
-        where: { id },
-        data: {
-          email: email ?? existingUser.email,
-          name: name ?? existingUser.name,
-        },
-      });
-
-      return res.json(updatedUser);
-    } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
-      return res.status(500).json({ error: "Erro interno no servidor" });
-    }
+    // Implementação básica
+    return res.status(501).json({ error: "Não implementado" });
   }
 
-  // Deletar um usuário
   static async delete(req: Request, res: Response) {
     try {
-      const id = parseInt(String(req.params.id), 10);
-      if (isNaN(id)) {
+      const id_usuario = parseInt(String(req.params.id), 10);
+      if (isNaN(id_usuario)) {
         return res.status(400).json({ error: "ID inválido" });
       }
 
-      const user = await prisma.user.findUnique({ where: { id } });
+      const user = await prisma.usuario.findUnique({ where: { id_usuario } });
       if (!user) {
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
 
-      await prisma.user.delete({ where: { id } });
+      await prisma.usuario.delete({ where: { id_usuario } });
 
       return res.status(204).send();
     } catch (error) {
