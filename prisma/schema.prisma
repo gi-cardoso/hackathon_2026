@@ -23,11 +23,24 @@ model Fornecedor {
 }
 
 model NotaFiscal {
-  id_nota        Int     @id @default(autoincrement())
-  id_fornecedor  Int?
-  numero_nf      String
-  chave_acesso   String  @db.VarChar(44)
-  arquivo_nf     String?
+  id_nota             Int      @id @default(autoincrement())
+  id_fornecedor       Int?
+  numero_nf           String
+  serie               String?
+  modelo              String?
+  natureza_operacao   String?
+  tipo_operacao       String?
+  data_emissao        DateTime?
+  chave_acesso        String   @unique @db.VarChar(44)
+  tipo_arquivo        String?
+  nome_arquivo        String?
+  caminho_arquivo     String?
+  mime_type           String?
+  tamanho_bytes       Int?
+  dados_completos     Json?
+  arquivo_nf          String?
+  criado_em           DateTime @default(now())
+  atualizado_em       DateTime @updatedAt
 
   fornecedor     Fornecedor?   @relation(fields: [id_fornecedor], references: [id_fornecedor])
   agendamentos   Agendamento[]
@@ -44,6 +57,8 @@ model Agendamento {
   horario_agendado        String
   tipo_acondicionamento   String
   status_agendamento      String
+  qtd_chapas_prevista     Int?
+  regra_chapas_aplicada   String?
 
   fornecedor              Fornecedor?     @relation(fields: [id_fornecedor], references: [id_fornecedor])
   nota_fiscal             NotaFiscal?     @relation(fields: [id_nota], references: [id_nota])
