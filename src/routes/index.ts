@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { userRouter } from "./user.routes";
 import { authRouter } from "./auth.routes";
+import { invoiceRouter } from "./invoice.routes";
+import { agendamentoRouter } from "./agendamento.routes";
 
 const router = Router();
 
@@ -18,5 +20,9 @@ router.use("/auth", authRouter);
 
 // User routes
 router.use("/users", userRouter);
+
+// Invoice parser routes
+router.use("/invoices", invoiceRouter);
+router.use("/agendamentos", agendamentoRouter);
 
 export { router };
