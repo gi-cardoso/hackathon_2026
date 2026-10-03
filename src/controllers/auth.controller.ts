@@ -69,8 +69,9 @@ export class AuthController {
         return res.status(400).json({ error: "CNPJ e senha são obrigatórios" });
       }
 
+      const cnpjNormalizado = String(cnpj).replace(/\D/g, "");
       const fornecedor = await prisma.fornecedor.findFirst({
-        where: { cnpj },
+        where: { cnpj: cnpjNormalizado },
       });
 
       if (!fornecedor || !fornecedor.senha_hash) {
