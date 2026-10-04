@@ -17,10 +17,6 @@ export function PortalFornecedorLayout() {
       <header className="fornecedor-layout-header">
         <div className="fornecedor-brand-block">
           <div className="fornecedor-logo"><Logo variant="full-dark" height="clamp(34px, 5vw, 52px)" /></div>
-          <div>
-            <h1>Portal do fornecedor</h1>
-            <p>O melhor café está aqui</p>
-          </div>
           <nav aria-label="Navegação do fornecedor">
             <NavLink to="/dashboard">Início</NavLink>
             <NavLink to="/agendamentos" end>Meus agendamentos</NavLink>

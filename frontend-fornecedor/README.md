@@ -1,4 +1,4 @@
-# COCAPEC | Portal do Fornecedor
+# COCAPEC
 
 Portal React + TypeScript + Vite para autenticacao e agendamento de entregas.
 

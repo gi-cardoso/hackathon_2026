@@ -13,7 +13,6 @@ export default function DashboardFornecedor() {
 
   return <div className="dashboard-page">
     <div className="dashboard-intro">
-      <span className="dashboard-eyebrow">Portal do fornecedor</span>
       <h2>Olá, {fornecedor?.nome_fornecedor || 'fornecedor'}.</h2>
       <p>Organize suas entregas e acompanhe cada etapa do recebimento na COCAPEC.</p>
     </div>
