@@ -4,6 +4,7 @@ import { authRouter } from "./auth.routes";
 import { invoiceRouter } from "./invoice.routes";
 import { agendamentoRouter } from "./agendamento.routes";
 import { fornecedorRouter } from "./fornecedor.routes";
+import { recebimentoRouter } from "../operacao/recebimento.routes";
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.use("/users", userRouter);
 router.use("/invoices", invoiceRouter);
 router.use("/agendamentos", agendamentoRouter);
 router.use("/fornecedores", fornecedorRouter);
+router.use("/recebimentos", recebimentoRouter);
 
 export { router };
