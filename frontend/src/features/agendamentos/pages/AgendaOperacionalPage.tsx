@@ -4,7 +4,7 @@ import { PageContent } from '../../../components/layout/PageContent';
 import { Card } from '../../../components/ui/Card';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
-import { api } from '../../../services/api';
+import { getAgendamentosOperacao } from '../../../services/api';
 import '../styles.css';
 
 interface AgendaItem { id_agendamento: number; data_agendada: string; horario_agendado: string; status_agendamento: string; fornecedor?: { nome_fornecedor?: string }; }
@@ -12,7 +12,7 @@ interface AgendaItem { id_agendamento: number; data_agendada: string; horario_ag
 export function AgendaOperacionalPage() {
   const [items, setItems] = useState<AgendaItem[]>([]);
   const [error, setError] = useState('');
-  useEffect(() => { api.get<AgendaItem[]>('/agendamentos/analise/compras').then((response) => setItems(response.data)).catch(() => setError('Não foi possível carregar a agenda.')); }, []);
+  useEffect(() => { getAgendamentosOperacao().then((response) => setItems(response)).catch(() => setError('Não foi possível carregar a agenda.')); }, []);
   const slots = ['08:00', '10:00', '13:00', '15:00'];
   return (
     <>

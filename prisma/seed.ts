@@ -4,26 +4,20 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Iniciando seed de banco de dados...');
 
-  // Limpando tabelas (cuidado em produção)
-  await prisma.equipeDiaria.deleteMany();
-  await prisma.itemBoletim.deleteMany();
-  await prisma.boletimDiario.deleteMany();
-  await prisma.descargaEquipamento.deleteMany();
-  await prisma.descargaChapa.deleteMany();
-  await prisma.descarga.deleteMany();
-  await prisma.recebimento.deleteMany();
-  await prisma.naoRecebimento.deleteMany();
-  await prisma.itemCarga.deleteMany();
-  await prisma.cargaDestino.deleteMany();
-  await prisma.carga.deleteMany();
-  await prisma.validacao.deleteMany();
-  await prisma.agendamento.deleteMany();
-  await prisma.notaFiscal.deleteMany();
-  await prisma.equipamento.deleteMany();
-  await prisma.chapa.deleteMany();
-  await prisma.armazem.deleteMany();
-  await prisma.usuario.deleteMany();
-  await prisma.fornecedor.deleteMany();
+  try {
+    const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>>`SELECT tablename FROM pg_tables WHERE schemaname='public'`;
+    const tables = tablenames
+      .map(({ tablename }) => tablename)
+      .filter((name) => name !== '_prisma_migrations')
+      .map((name) => `"public"."${name}"`)
+      .join(', ');
+
+    if (tables.length > 0) {
+      await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} RESTART IDENTITY CASCADE;`);
+    }
+  } catch (error) {
+    console.error('Erro ao truncar tabelas:', error);
+  }
 
   // 1. Armazéns
   console.log('Criando Armazéns...');

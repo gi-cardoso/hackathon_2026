@@ -506,16 +506,9 @@ export class AgendamentoService {
   ) {
     return prisma.agendamento.findMany({
       where: {
-        status_agendamento:
-          "PENDENTE",
-
         validacoes: {
           some: {
-            tipo_validacao:
-              "COMPRAS",
-
-            status:
-              "PENDENTE",
+            tipo_validacao: "COMPRAS",
           },
         },
       },

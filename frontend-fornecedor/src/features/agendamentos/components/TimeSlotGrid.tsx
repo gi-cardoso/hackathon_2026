@@ -10,7 +10,6 @@ export function TimeSlotGrid({ slots, selectedTime, onSelect }: TimeSlotGridProp
   return (
     <fieldset className="fornecedor-time-slot-grid">
       <legend>Horários disponíveis</legend>
-      <p className="fornecedor-time-slot-grid-help">Disponibilidade demonstrativa e local, preparada para futura substituição pela API.</p>
       <div className="fornecedor-time-slot-list">
         {slots.map((slot) => {
           const isSelected = selectedTime === slot.time;
