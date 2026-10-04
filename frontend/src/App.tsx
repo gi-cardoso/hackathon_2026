@@ -46,7 +46,6 @@ const modules = [
     description: 'Fila de análise e relacionamento com fornecedores.',
     roles: ['COMPRAS', 'ADMIN'],
     pages: [
-      { slug: 'solicitacoes', label: 'Solicitações', title: 'Solicitações de compras' },
       { slug: 'fornecedores', label: 'Fornecedores', title: 'Fornecedores' },
     ],
   },
@@ -173,9 +172,7 @@ function App() {
                   <Route
                     key={page.slug}
                     path={page.slug}
-                    element={module.path === 'compras' && page.slug === 'solicitacoes'
-                      ? <AgendamentosListPage />
-                      : module.path === 'compras' && page.slug === 'fornecedores'
+                    element={module.path === 'compras' && page.slug === 'fornecedores'
                         ? <FornecedoresPage />
                       : module.path === 'boletim' && page.slug === 'publicacoes'
                         ? <BoletinsPage />

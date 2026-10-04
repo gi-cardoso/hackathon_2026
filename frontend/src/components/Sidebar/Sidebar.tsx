@@ -6,8 +6,8 @@ import './Sidebar.css';
 export function Sidebar() {
   const { user } = useAuth();
   const items = [
-    { path: '/compras', label: 'Compras', roles: ['COMPRAS', 'ADMIN'] },
     { path: '/agendamentos', label: 'Agendamentos', roles: ['COMPRAS', 'ARMAZEM', 'ADMIN'] },
+    { path: '/compras', label: 'Compras', roles: ['COMPRAS', 'ADMIN'] },
     { path: '/armazem', label: 'Armazém', roles: ['ARMAZEM', 'ADMIN'] },
     { path: '/boletim', label: 'Boletim', roles: ['BOLETIM', 'ADMIN'] },
     { path: '/bi', label: 'Dashboard', roles: ['GESTOR', 'ADMIN'] },

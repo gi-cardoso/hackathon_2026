@@ -60,7 +60,6 @@ export function FornecedoresPage() {
       <PageContent>
         <div className="page-heading-row">
           <div>
-            <span className="page-eyebrow">Compras / relacionamento</span>
             <h2>Fornecedores</h2>
             <p className="agendamentos-intro">Fornecedores cadastrados no sistema.</p>
           </div>
