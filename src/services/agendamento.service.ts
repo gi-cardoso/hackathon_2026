@@ -815,6 +815,17 @@ export class AgendamentoService {
 
             motivo_reagendamento:
               input.motivo.trim(),
+
+            validacoes: {
+              updateMany: {
+                where: {
+                  tipo_validacao: "COMPRAS",
+                },
+                data: {
+                  status: "PENDENTE",
+                },
+              },
+            },
           },
 
           include:
@@ -870,11 +881,10 @@ export class AgendamentoService {
           agendamento.validacoes[0];
 
         if (
-          agendamento.status_agendamento !==
-            "PENDENTE" ||
+          (agendamento.status_agendamento !== "PENDENTE" &&
+            agendamento.status_agendamento !== "REAGENDADO") ||
           !validacao ||
-          validacao.status !==
-            "PENDENTE"
+          validacao.status !== "PENDENTE"
         ) {
           throw new Error(
             "Este agendamento já foi analisado."

@@ -57,7 +57,7 @@ export function AgendamentosListPage() {
   const filteredItems = useMemo(
     () => status === 'TODOS'
       ? items
-      : items.filter((item) => item.status_agendamento === status),
+      : items.filter((item) => status === 'PENDENTE' ? (item.status_agendamento === 'PENDENTE' || item.status_agendamento === 'REAGENDADO') : item.status_agendamento === status),
     [items, status],
   );
 
