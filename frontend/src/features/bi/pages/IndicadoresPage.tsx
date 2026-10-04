@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Breadcrumb } from '../../../components/Breadcrumb';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { PageContent } from '../../../components/layout/PageContent';
 import { Card } from '../../../components/ui/Card';
 import { Input } from '../../../components/ui/Input';
@@ -93,19 +95,23 @@ export function IndicadoresPage() {
           >
             <label>
               Data de Início
-              <Input
-                type="date"
-                value={dataInicio}
-                onChange={(e) => setDataInicio(e.target.value)}
+              <DatePicker
+                selected={dataInicio ? new Date(`${dataInicio}T00:00:00`) : null}
+                onChange={(d: Date | null) => { if (d) setDataInicio(d.toISOString().split('T')[0]); else setDataInicio(''); }}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Selecione uma data"
+                className="ui-input"
                 required
               />
             </label>
             <label>
               Data de Fim
-              <Input
-                type="date"
-                value={dataFim}
-                onChange={(e) => setDataFim(e.target.value)}
+              <DatePicker
+                selected={dataFim ? new Date(`${dataFim}T00:00:00`) : null}
+                onChange={(d: Date | null) => { if (d) setDataFim(d.toISOString().split('T')[0]); else setDataFim(''); }}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="Selecione uma data"
+                className="ui-input"
                 required
               />
             </label>
