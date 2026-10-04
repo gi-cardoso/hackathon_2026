@@ -66,6 +66,84 @@ export async function getRecebimento(id: number) {
   return response.data;
 }
 
+export interface Armazem {
+  id_armazem: number;
+  nome_armazem: string;
+  codigo_deposito: string;
+  grupo: string;
+}
+
+export interface Equipamento {
+  id_tipo_equipamento: number;
+  nome: string;
+  armazem_base: string | null;
+  quantidade_disponivel: number;
+}
+
+export interface AgendamentoOperacao {
+  id_agendamento: number;
+  id_fornecedor: number;
+  id_nota: number;
+  numero_pedido_compra: string | null;
+  data_agendada: string;
+  horario_agendado: string;
+  tipo_acondicionamento: string;
+  status_agendamento: string;
+  qtd_chapas_prevista: number;
+  regra_chapas_aplicada: string;
+  fornecedor?: {
+    id_fornecedor: number;
+    codigo_fornecedor_cocapec: string | null;
+    nome_fornecedor: string;
+    cnpj: string;
+    contato: string | null;
+  } | null;
+  recebimentos: Array<{ id_recebimento: number; status_recebimento: string }>;
+  nao_recebimentos: Array<{ id: number; motivo_padronizado: string; observacao: string | null }>;
+}
+
+export interface NaoRecebimentoPayload {
+  id_agendamento: number;
+  motivo_padronizado: string;
+  observacao?: string;
+  data_registro: string;
+}
+
+export interface NaoRecebimentoResponse {
+  id: number;
+  id_agendamento: number;
+  motivo_padronizado: string;
+  observacao: string | null;
+  data_registro: string;
+  id_usuario_registro: number;
+}
+
+export async function getArmazens() {
+  const response = await api.get<Armazem[]>('/armazens');
+  return response.data;
+}
+
+export async function getEquipamentos() {
+  const response = await api.get<Equipamento[]>('/equipamentos');
+  return response.data;
+}
+
+export async function getAgendamentosOperacao(status?: string) {
+  const query = status ? `?status=${status}` : '';
+  const response = await api.get<AgendamentoOperacao[]>(`/agendamentos${query}`);
+  return response.data;
+}
+
+export async function getNaoRecebimentoMotivos() {
+  const response = await api.get<{ motivos: string[]; observacao_obrigatoria_para: string[] }>('/nao-recebimentos/motivos');
+  return response.data;
+}
+
+export async function createNaoRecebimento(payload: NaoRecebimentoPayload) {
+  const response = await api.post<NaoRecebimentoResponse>('/nao-recebimentos', payload);
+  return response.data;
+}
+
 export const tiposItemBoletim = [
   'SACARIA_MALAS_25',
   'SACARIA_MALAS_40',
