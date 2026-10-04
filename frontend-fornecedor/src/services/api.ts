@@ -25,15 +25,15 @@ export interface AvailabilityResponse {
 
 export interface AgendamentoFornecedor {
   id_agendamento: number;
+  id_fornecedor?: number | null;
   data_agendada: string;
   horario_agendado: string;
   tipo_acondicionamento: string;
   status_agendamento: string;
-  id_nota?: number;
+  id_nota?: number | null;
   peso_total: number;
+  cargas: Array<{ peso_total: number }>;
 }
-
-const localAppointmentsKey = '@COCAPEC_FORNECEDOR:agendamentos';
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
@@ -73,22 +73,7 @@ export async function createAgendamento(payload: {
   peso_total: number;
 }) {
   const response = await api.post<AgendamentoFornecedor>('/agendamentos', payload);
-  const created = { ...payload, ...response.data, status_agendamento: response.data.status_agendamento || 'PENDENTE' };
-  const current = getStoredAgendamentos();
-  localStorage.setItem(localAppointmentsKey, JSON.stringify([created, ...current]));
   return response.data;
-}
-
-export function getStoredAgendamentos(): AgendamentoFornecedor[] {
-  // TODO: conectar API quando o backend disponibilizar GET /agendamentos do fornecedor.
-  const stored = localStorage.getItem(localAppointmentsKey);
-  if (!stored) return [];
-  try {
-    const parsed: unknown = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed as AgendamentoFornecedor[] : [];
-  } catch {
-    return [];
-  }
 }
 
 api.interceptors.request.use((config) => {

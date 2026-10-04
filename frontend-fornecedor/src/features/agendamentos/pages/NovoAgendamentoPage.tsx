@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import type { ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../../../components/ui/Button';
@@ -24,6 +25,7 @@ function getToday() {
 }
 
 export function NovoAgendamentoPage() {
+  const queryClient = useQueryClient();
   const [step, setStep] = useState<FormStep>(1);
   const [file, setFile] = useState<File | null>(null);
   const [invoice, setInvoice] = useState<InvoiceData | null>(null);
@@ -79,6 +81,7 @@ export function NovoAgendamentoPage() {
         tipo_acondicionamento: acondicionamento,
         peso_total: invoice.transporte?.volumes?.pesoBruto ?? 0,
       });
+      await queryClient.invalidateQueries({ queryKey: ['agendamentos', 'fornecedor'] });
       setStep(5);
     } catch (requestError: unknown) {
       setError(getApiError(requestError));
