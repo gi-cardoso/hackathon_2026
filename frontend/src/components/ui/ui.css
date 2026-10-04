@@ -10,7 +10,8 @@
 .ui-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); padding: var(--space-4); }
 .ui-status { display: inline-flex; align-items: center; width: fit-content; border-radius: 999px; padding: 0.3rem 0.65rem; font-size: 0.78rem; font-weight: 800; }
 .ui-status-agendado, .ui-status-nf_validada, .ui-status-aprovado { background: var(--blue-50); color: var(--blue-900); }
-.ui-status-no_patio, .ui-status-concluido { background: #E8F5E9; color: var(--green-800); }
+.ui-status-no_patio, .ui-status-concluido, .ui-status-ativo { background: #E8F5E9; color: var(--green-800); }
+.ui-status-inativo { background: #FDECEC; color: var(--danger); }
 .ui-status-pendente { background: #FFF8D6; color: #725B00; }
 .ui-status-cancelado, .ui-status-rejeitado { background: #FDECEC; color: var(--danger); }
 .ui-empty-state { padding: var(--space-5); border: 1px dashed var(--line); border-radius: var(--radius-md); text-align: center; background: var(--blue-50); }

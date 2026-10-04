@@ -3,6 +3,27 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../lib/prisma";
 
 export class FornecedorController {
+  static async getAll(req: Request, res: Response) {
+    try {
+      const fornecedores = await prisma.fornecedor.findMany({
+        select: {
+          id_fornecedor: true,
+          codigo_fornecedor_cocapec: true,
+          nome_fornecedor: true,
+          cnpj: true,
+          contato: true,
+          ativo: true,
+        },
+        orderBy: { nome_fornecedor: "asc" },
+      });
+
+      return res.json(fornecedores);
+    } catch (error) {
+      console.error("Erro ao listar fornecedores:", error);
+      return res.status(500).json({ error: "Erro interno no servidor" });
+    }
+  }
+
   static async create(req: Request, res: Response) {
     try {
       const {

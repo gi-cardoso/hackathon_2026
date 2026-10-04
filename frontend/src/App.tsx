@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './pages/Login';
+import { FornecedoresPage } from './pages/FornecedoresPage';
 import { ModuleLayout } from './pages/ModulePage';
 import { ModuleStatusPage } from './pages/ModuleStatusPage';
 import type { ModuleMenuItem } from './components/ModuleHeader';
@@ -170,6 +171,8 @@ function App() {
                     path={page.slug}
                     element={module.path === 'compras' && page.slug === 'solicitacoes'
                       ? <AgendamentosListPage />
+                      : module.path === 'compras' && page.slug === 'fornecedores'
+                        ? <FornecedoresPage />
                       : <ModuleStatusPage modulePath={module.path} moduleTitle={module.title} title={page.title} />}
                   />
                 ))}
