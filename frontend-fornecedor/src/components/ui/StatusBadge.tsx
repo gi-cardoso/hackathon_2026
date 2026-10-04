@@ -1,11 +1,12 @@
 import './ui.css';
 
-type Status = 'AGENDADO' | 'NF_VALIDADA' | 'NO_PATIO' | 'CONCLUIDO' | 'CANCELADO' | 'PENDENTE' | 'APROVADO' | 'REJEITADO';
+type Status = 'AGENDADO' | 'NF_VALIDADA' | 'NO_PATIO' | 'DESCARREGANDO' | 'CONCLUIDO' | 'CANCELADO' | 'PENDENTE' | 'APROVADO' | 'REJEITADO';
 
 const labels: Record<Status, string> = {
   AGENDADO: 'Agendado',
   NF_VALIDADA: 'NF validada',
   NO_PATIO: 'No pátio',
+  DESCARREGANDO: 'Descarregando',
   CONCLUIDO: 'Concluído',
   CANCELADO: 'Cancelado',
   PENDENTE: 'Pendente',

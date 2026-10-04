@@ -16,6 +16,7 @@ import {
   AgendamentosListPage,
 } from './features/agendamentos/pages';
 import './App.css';
+import { NotFound } from './pages/NotFound';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -180,6 +181,7 @@ function App() {
             );
           })}
           <Route path="/" element={<Navigate to="/compras" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         </Router>
       </AuthProvider>

@@ -6,6 +6,7 @@ interface LogoProps {
   variant?: LogoVariant;
   height?: string;
   className?: string;
+  onError?: () => void;
 }
 
 const sources: Record<LogoVariant, string> = {
@@ -14,12 +15,13 @@ const sources: Record<LogoVariant, string> = {
   symbol: 'simbolo-cocapec-512.png',
 };
 
-export function Logo({ variant = 'full', height = 'clamp(28px, 4vw, 44px)', className = '' }: LogoProps) {
+export function Logo({ variant = 'full', height = 'clamp(28px, 4vw, 44px)', className = '', onError }: LogoProps) {
   const [hasError, setHasError] = useState(false);
   const source = `${import.meta.env.BASE_URL}logos/${sources[variant]}`;
   const handleError = (event: SyntheticEvent<HTMLImageElement>) => {
     event.currentTarget.style.display = 'none';
     setHasError(true);
+    onError?.();
   };
 
   return (

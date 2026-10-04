@@ -1,20 +1,31 @@
 :root {
+  --font-family-base: 'Inter', sans-serif;
   --blue-700: #0A5A9C;
   --blue-900: #073B66;
   --blue-50: #EAF3FA;
   --yellow-500: #F5C400;
+  --yellow-hover: #E4B600;
   --green-600: #4EA83C;
   --green-800: #2F7D32;
   --surface: #F7F9FB;
   --danger: #C62828;
+  --success-bg: #E8F5E9;
+  --danger-bg: #FDECEC;
+  --warning-bg: #FFF8D6;
+  --warning-ink: #725B00;
   --white: #FFFFFF;
   --ink: #102A43;
   --muted: #52606D;
   --line: #D9E2EC;
-  --font-family-base: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --radius-sm: 8px;
+  --space-4px: 4px;
+  --space-8px: 8px;
+  --space-12px: 12px;
+  --space-16px: 16px;
+  --space-24px: 24px;
+  --space-32px: 32px;
+  --radius-sm: 14px;
   --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-lg: 14px;
   --shadow-sm: 0 2px 8px rgba(7, 59, 102, 0.08);
   --shadow-md: 0 10px 24px rgba(7, 59, 102, 0.12);
   --space-1: clamp(0.35rem, 0.8vw, 0.55rem);
@@ -57,3 +68,12 @@ a:hover { color: var(--blue-900); }
 :focus-visible { outline: 3px solid rgba(245, 196, 0, 0.75); outline-offset: 2px; }
 h1, h2, h3, h4, p { margin-top: 0; }
 h1, h2, h3, h4 { color: var(--blue-900); line-height: 1.15; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

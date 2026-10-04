@@ -1,31 +1,32 @@
 # COCAPEC | Portal Interno
 
-Portal React + TypeScript + Vite para Compras, Armazem, Boletim, BI, Usuarios e Configuracoes.
+Portal React + TypeScript + Vite para a operacao interna.
 
 ## Rodar
 
 ```bash
 npm install
+copy .env.example .env
 npm run dev
 ```
 
-O portal abre na porta padrao do Vite. Configure a API em `.env`:
-
-```bash
-VITE_API_URL=http://localhost:3000/api
-```
+`VITE_API_URL` usa `http://localhost:3000/api` por padrao. Defina `VITE_USE_MOCKS=true` apenas para habilitar handlers MSW de endpoints ainda ausentes.
 
 ## Comandos
 
+- `npm run dev`: desenvolvimento
 - `npm run build`: typecheck e build de producao
-- `npm run lint`: verificacao Oxlint
+- `npm run lint`: Oxlint
+- `npm run test`: Vitest com Testing Library
 
 ## Estrutura
 
-- `src/components`: shell, navegacao e componentes reutilizaveis
-- `src/features/agendamentos`: lista, detalhe e agenda operacional
-- `src/pages`: login e telas de modulos
-- `src/services`: cliente HTTP e integracoes
+- `src/components`: shell, navegacao e UI compartilhada
+- `src/features/agendamentos`: fluxo de agendamentos
+- `src/hooks`: queries tipadas por recurso
+- `src/mocks`: handlers condicionais do MSW
+- `src/providers`: React Query e Toaster
+- `src/services`: cliente HTTP e normalizacao de erros
 - `src/theme.css`: tokens visuais COCAPEC
 
-A fila de analise de agendamentos usa a API real. Modulos sem endpoint no backend exibem a pendencia explicitamente na interface.
+A fila de agendamentos usa `/agendamentos/analise/compras`. Telas sem rota real permanecem sinalizadas como pendencia, sem endpoint inventado.

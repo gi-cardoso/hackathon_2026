@@ -11,6 +11,7 @@ import DashboardFornecedor from './pages/DashboardFornecedor';
 import LoginFornecedor from './pages/LoginFornecedor';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { SessionExpiryNotice } from './components/SessionExpiryNotice';
+import { NotFound } from './pages/NotFound';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -39,6 +40,7 @@ function App() {
             </Route>
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         </Router>
       </AuthProvider>

@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 export interface InvoiceData {
   id_nota?: number;
@@ -42,6 +44,10 @@ export function getApiError(error: unknown): string {
     return error.response?.data?.error || error.response?.data?.details || 'Não foi possível concluir a operação.';
   }
   return 'Não foi possível concluir a operação.';
+}
+
+export function parseApiResponse<T>(schema: z.ZodType<T>, data: unknown): T {
+  return schema.parse(data);
 }
 
 export async function uploadInvoice(file: File): Promise<InvoiceData> {
@@ -100,6 +106,7 @@ api.interceptors.response.use(
       localStorage.removeItem('@COCAPEC_FORNECEDOR:token');
       localStorage.removeItem('@COCAPEC_FORNECEDOR:user');
       window.dispatchEvent(new CustomEvent('cocapec:session-expired'));
+      toast.error('Sua sessão expirou. Entre novamente.');
       if (window.location.pathname !== '/login') window.location.assign('/login');
     }
     return Promise.reject(error);
