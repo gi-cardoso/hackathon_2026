@@ -401,3 +401,15 @@ export async function createUser(payload: CreateUserPayload) {
 export async function deleteUser(id: number) {
   await api.delete(`/users/${id}`);
 }
+
+export interface ChapaResponse {
+  id_chapeiro: string;
+  matricula: string;
+  nome: string;
+  ativo: boolean;
+}
+
+export async function getChapas() {
+  const response = await api.get<ChapaResponse[]>('/chapas');
+  return response.data;
+}
