@@ -10,6 +10,7 @@ interface ItemProducao {
 
 interface MembroEquipe {
   matricula: string;
+  id_chapeiro?: string;
   jornada: TipoJornada;
 }
 
@@ -21,6 +22,11 @@ interface DadosBoletim {
 }
 
 export function validarBoletim(dados: DadosBoletim) {
+  dados.equipe = dados.equipe.map((membro) => ({
+    ...membro,
+    matricula: membro.matricula || membro.id_chapeiro || "",
+  }));
+
   if (!dados.data) {
     throw new Error("A data do boletim é obrigatória.");
   }

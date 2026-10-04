@@ -8,6 +8,7 @@ import { recebimentoRouter } from "../operacao/recebimento.routes";
 import { dashboardRouter } from "../dashboard/dashboard.routes";
 import { naoRecebimentoRouter } from "../operacao/nao-recebimento.routes";
 import { operacaoCatalogoRouter } from "../operacao/catalogo.routes";
+import { chapaRouter } from "./chapa.routes";
 
 const router = Router();
 
@@ -33,6 +34,7 @@ router.use("/fornecedores", fornecedorRouter);
 router.use("/recebimentos", recebimentoRouter);
 router.use("/dashboard", dashboardRouter);
 router.use("/nao-recebimentos", naoRecebimentoRouter);
+router.use("/chapas", chapaRouter);
 router.use("/", operacaoCatalogoRouter);
 
 export { router };
