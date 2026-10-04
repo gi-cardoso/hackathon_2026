@@ -5,6 +5,9 @@ import { invoiceRouter } from "./invoice.routes";
 import { agendamentoRouter } from "./agendamento.routes";
 import { fornecedorRouter } from "./fornecedor.routes";
 import { recebimentoRouter } from "../operacao/recebimento.routes";
+import { dashboardRouter } from "../dashboard/dashboard.routes";
+import { naoRecebimentoRouter } from "../operacao/nao-recebimento.routes";
+import { operacaoCatalogoRouter } from "../operacao/catalogo.routes";
 
 const router = Router();
 
@@ -28,5 +31,8 @@ router.use("/invoices", invoiceRouter);
 router.use("/agendamentos", agendamentoRouter);
 router.use("/fornecedores", fornecedorRouter);
 router.use("/recebimentos", recebimentoRouter);
+router.use("/dashboard", dashboardRouter);
+router.use("/nao-recebimentos", naoRecebimentoRouter);
+router.use("/", operacaoCatalogoRouter);
 
 export { router };
