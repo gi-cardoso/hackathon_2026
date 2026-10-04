@@ -1,6 +1,8 @@
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { LogOut } from 'lucide-react';
 import './UserMenu.css';
 
-export function getInitials(nome: string): string {
+function getInitials(nome: string): string {
   const parts = nome.trim().split(' ');
   if (parts.length === 0 || parts[0] === '') return '?';
   if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
@@ -10,18 +12,37 @@ export function getInitials(nome: string): string {
 interface UserMenuProps {
   nome: string;
   role: string;
+  onLogout: () => void;
 }
 
-export function UserMenu({ nome, role }: UserMenuProps) {
+export function UserMenu({ nome, role, onLogout }: UserMenuProps) {
   return (
-    <button className="user-menu-btn" type="button">
-      <div className="user-avatar">
-        {getInitials(nome)}
-      </div>
-      <div className="user-info">
-        <span className="user-name">{nome}</span>
-        <span className="user-role">{role}</span>
-      </div>
-    </button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button className="user-menu-btn" type="button" aria-label="Menu do usuário">
+          <div className="user-avatar">
+            {getInitials(nome)}
+          </div>
+          <div className="user-info">
+            <span className="user-name">{nome}</span>
+            <span className="user-role">{role}</span>
+          </div>
+        </button>
+      </DropdownMenu.Trigger>
+
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content className="user-menu-content" sideOffset={8} align="end" collisionPadding={16}>
+          <div className="user-menu-header">
+            <span className="user-name">{nome}</span>
+            <span className="user-role">{role}</span>
+          </div>
+          <DropdownMenu.Separator className="user-menu-separator" />
+          <DropdownMenu.Item className="user-menu-item logout" onClick={onLogout}>
+            <LogOut size={16} />
+            <span>Sair</span>
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }

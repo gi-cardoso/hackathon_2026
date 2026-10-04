@@ -17,8 +17,7 @@ export function Header() {
     <header className="app-header">
       <div className="header-title"><Logo variant="symbol" height="32px" /></div>
       <div className="header-user">
-        <UserMenu nome={user?.nome || 'Usuário'} role={user?.role || 'Visitante'} />
-        <button onClick={handleLogout} className="btn-logout">Sair</button>
+        <UserMenu nome={user?.nome || 'Usuário'} role={user?.role || 'Visitante'} onLogout={handleLogout} />
       </div>
     </header>
   );
