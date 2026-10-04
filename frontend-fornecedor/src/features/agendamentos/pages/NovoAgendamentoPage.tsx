@@ -14,8 +14,8 @@ type FormStep = 1 | 2 | 3 | 4 | 5;
 type Acondicionamento = 'BATIDO' | 'PALETIZADO' | 'BIG_BAG';
 
 const acondicionamentos: Array<{ value: Acondicionamento; title: string; description: string }> = [
-  { value: 'BATIDO', title: 'Batido / Solto', description: 'Carga exclusiva no horário.' },
-  { value: 'PALETIZADO', title: 'Paletizado / Sacaria', description: 'Até dois caminhões no horário.' },
+  { value: 'BATIDO', title: 'Batido', description: 'Carga exclusiva no horário.' },
+  { value: 'PALETIZADO', title: 'Paletizado', description: 'Até dois caminhões no horário.' },
   { value: 'BIG_BAG', title: 'Big Bag', description: 'Até dois caminhões no horário.' },
 ];
 

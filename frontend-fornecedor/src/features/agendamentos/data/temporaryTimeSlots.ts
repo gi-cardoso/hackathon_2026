@@ -1,4 +1,4 @@
-export type Acondicionamento = 'Batido/Solto' | 'Paletizado/Sacaria' | 'Big Bag';
+export type Acondicionamento = 'Batido' | 'Paletizado' | 'Big Bag';
 export type TimeSlotStatus = 'available' | 'occupied' | 'partially-occupied' | 'unavailable';
 
 export interface TemporaryTimeSlot {
@@ -26,7 +26,7 @@ export function getTemporaryTimeSlots(date: string, acondicionamento: string): T
     }));
   }
 
-  const isBatido = acondicionamento === 'Batido/Solto';
+  const isBatido = acondicionamento === 'Batido';
 
   return [
     {
@@ -41,7 +41,7 @@ export function getTemporaryTimeSlots(date: string, acondicionamento: string): T
           time: '10:00',
           status: 'unavailable',
           label: 'Indisponível',
-          description: 'Batido/Solto exige exclusividade; o horário tem ocupação compartilhada temporária.',
+          description: 'Batido exige exclusividade; o horário tem ocupação compartilhada temporária.',
           selectable: false,
         }
       : {
@@ -63,7 +63,7 @@ export function getTemporaryTimeSlots(date: string, acondicionamento: string): T
       status: 'available',
       label: 'Disponível',
       description: isBatido
-        ? 'Disponível para uma carga exclusiva Batido/Solto.'
+        ? 'Disponível para uma carga exclusiva Batido.'
         : 'Disponível para até 2 caminhões de carga compartilhável.',
       selectable: true,
     },
