@@ -228,12 +228,90 @@ export function IndicadoresPage() {
               </div>
             </div>
 
-            <h3 className="section-title">Dimensionamento de Chapas</h3>
-            <div className="stats-grid">
-              <StatCard label="Situação Geral" value={dashboard.dimensionamento_chapas.situacao_geral.replace(/_/g, ' ')} />
-              <StatCard label="Chapas Previstos" value={dashboard.dimensionamento_chapas.chapas_previstos_total} />
-              <StatCard label="Chapas Utilizados" value={dashboard.dimensionamento_chapas.chapas_utilizados_total} />
+            <div className="dashboard-row">
+              <div className="dashboard-col">
+                <h3 className="section-title">Cargas por Dia</h3>
+                <Card className="table-card">
+                  <table className="ui-table">
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Cargas</th>
+                        <th>Peso (kg)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dashboard.cargas_recebidas_por_dia.map((item) => (
+                        <tr key={item.data}>
+                          <td>{new Date(item.data).toLocaleDateString('pt-BR')}</td>
+                          <td>{item.quantidade_cargas}</td>
+                          <td>{formatDecimal(item.peso_total_kg)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card>
+              </div>
+
+              <div className="dashboard-col">
+                <h3 className="section-title">Não Recebimentos (Motivos)</h3>
+                <Card className="table-card">
+                  <table className="ui-table">
+                    <thead>
+                      <tr>
+                        <th>Motivo</th>
+                        <th>Quantidade</th>
+                        <th>%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dashboard.nao_recebimentos.por_motivo.map((item) => (
+                        <tr key={item.motivo}>
+                          <td>{item.motivo.replace(/_/g, ' ')}</td>
+                          <td>{item.quantidade}</td>
+                          <td>{formatPercent(item.percentual)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Card>
+              </div>
             </div>
+
+            <h3 className="section-title">Análise de Movimento</h3>
+            <div className="dashboard-row">
+              <div className="dashboard-col">
+                <Card>
+                  <dl className="detail-list">
+                    <div>
+                      <dt>Dia de Maior Movimento</dt>
+                      <dd>{dashboard.movimento.dia_de_maior_movimento?.dia_semana || 'N/A'}</dd>
+                    </div>
+                    <div>
+                      <dt>Horário de Maior Movimento</dt>
+                      <dd>{dashboard.movimento.horario_de_maior_movimento?.horario || 'N/A'}</dd>
+                    </div>
+                  </dl>
+                </Card>
+              </div>
+              
+              <div className="dashboard-col">
+                <Card>
+                  <dl className="detail-list">
+                    <div>
+                      <dt>Média de Chapas por Recebimento</dt>
+                      <dd>{formatDecimal(dashboard.colaboradores_por_recebimento.media_chapas_por_recebimento)} chapas</dd>
+                    </div>
+                    <div>
+                      <dt>Mínimo / Máximo (Chapas)</dt>
+                      <dd>{dashboard.colaboradores_por_recebimento.menor_quantidade} / {dashboard.colaboradores_por_recebimento.maior_quantidade}</dd>
+                    </div>
+                  </dl>
+                </Card>
+              </div>
+            </div>
+
+
           </div>
         )}
       </PageContent>

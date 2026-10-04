@@ -304,6 +304,54 @@ export interface DashboardOperacaoResponse {
     chapas_previstos_total: number;
     chapas_utilizados_total: number;
   };
+  colaboradores_por_recebimento: {
+    media_chapas_por_recebimento: number;
+    menor_quantidade: number;
+    maior_quantidade: number;
+    distribuicao: Array<{
+      qtd_chapas: number;
+      quantidade_recebimentos: number;
+    }>;
+  };
+  utilizacao_locais_descarga: Array<{
+    id_armazem: number;
+    nome_armazem: string;
+    quantidade_cargas: number;
+    peso_total_kg: number;
+    percentual_do_total: number;
+    metodologia: string;
+  }>;
+  movimento: {
+    por_horario: Array<{
+      horario: string;
+      quantidade_agendamentos: number;
+      quantidade_recebimentos: number;
+    }>;
+    por_dia_semana: Array<{
+      dia_semana: string;
+      quantidade_agendamentos: number;
+      quantidade_recebimentos: number;
+    }>;
+    horario_de_maior_movimento: {
+      horario: string;
+      quantidade_agendamentos: number;
+      quantidade_recebimentos: number;
+    } | null;
+    dia_de_maior_movimento: {
+      dia_semana: string;
+      quantidade_agendamentos: number;
+      quantidade_recebimentos: number;
+    } | null;
+  };
+  nao_recebimentos: {
+    total: number;
+    por_motivo: Array<{
+      motivo: string;
+      quantidade: number;
+      percentual: number;
+    }>;
+    metodologia_data: string;
+  };
 }
 
 export async function getDashboardOperacao(dataInicio: string, dataFim: string) {
