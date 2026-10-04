@@ -46,8 +46,8 @@ export interface RecebimentoResponse {
 }
 
 export function getApiError(error: unknown): string {
-  if (axios.isAxiosError<{ error?: string; details?: string }>(error)) {
-    return error.response?.data?.error || error.response?.data?.details || 'Não foi possível concluir a operação.';
+  if (axios.isAxiosError<{ error?: string; erro?: string; details?: string }>(error)) {
+    return error.response?.data?.error || error.response?.data?.erro || error.response?.data?.details || 'Não foi possível concluir a operação.';
   }
   return 'Não foi possível concluir a operação.';
 }

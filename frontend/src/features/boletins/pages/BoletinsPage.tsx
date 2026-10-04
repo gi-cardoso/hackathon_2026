@@ -50,7 +50,8 @@ function formatDecimal(value: number | string) {
 }
 
 function formatDate(value: string) {
-  return new Date(value).toLocaleDateString('pt-BR');
+  const [year, month, day] = value.substring(0, 10).split('-');
+  return `${day}/${month}/${year}`;
 }
 
 function labelize(value: string) {
@@ -130,9 +131,9 @@ export function BoletinsPage() {
 
     const productionPayload = production.map((item) => ({
       tipoItem: item.tipoItem as TipoItemBoletim,
-      descarga: parseQuantity(item.descarga),
-      remocao: parseQuantity(item.remocao),
-      transferencia: parseQuantity(item.transferencia),
+      descarga: parseQuantity(item.descarga) as number,
+      remocao: parseQuantity(item.remocao) as number,
+      transferencia: parseQuantity(item.transferencia) as number,
     }));
     if (productionPayload.some((item) => !item.tipoItem || item.descarga === null || item.remocao === null || item.transferencia === null || (item.descarga === 0 && item.remocao === 0 && item.transferencia === 0))) {
       setError('Cada item deve ter um tipo válido, quantidades não negativas e alguma movimentação.');
