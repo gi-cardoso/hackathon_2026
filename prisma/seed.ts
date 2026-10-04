@@ -123,14 +123,14 @@ async function main() {
       numero_pedido_compra: 'PED-1000',
       data_agendada: hoje,
       horario_agendado: '08:00',
-      tipo_acondicionamento: 'Paletizado',
+      tipo_acondicionamento: 'PALETIZADO',
       status_agendamento: 'CONCLUIDO',
       qtd_chapas_prevista: 2,
       regra_chapas_aplicada: 'Regra Padrão (2 Chapas)',
       cargas: {
         create: {
           peso_total: 12000,
-          tipo_acondicionamento: 'Paletizado',
+          tipo_acondicionamento: 'PALETIZADO',
           destinos: { create: { id_armazem: armazem1.id_armazem } },
           itens: {
             create: { codigo_item_cocapec: 'FERT-01', descricao_item: 'Fertilizante NPK', quantidade: 240 }
@@ -171,13 +171,13 @@ async function main() {
       numero_pedido_compra: 'PED-1001',
       data_agendada: hoje,
       horario_agendado: '10:00',
-      tipo_acondicionamento: 'Sacaria',
+      tipo_acondicionamento: 'BIG_BAG',
       status_agendamento: 'CONCLUIDO',
       qtd_chapas_prevista: 4,
       cargas: {
         create: {
           peso_total: 25000,
-          tipo_acondicionamento: 'Sacaria',
+          tipo_acondicionamento: 'BIG_BAG',
           destinos: { create: { id_armazem: armazem2.id_armazem } },
         }
       },
@@ -206,12 +206,12 @@ async function main() {
       numero_pedido_compra: 'PED-1002',
       data_agendada: hoje,
       horario_agendado: '14:00',
-      tipo_acondicionamento: 'Granel',
-      status_agendamento: 'NAO_RECEBIDO',
+      tipo_acondicionamento: 'BATIDO',
+      status_agendamento: 'CANCELADO',
       qtd_chapas_prevista: 0,
       nao_recebimentos: {
         create: {
-          motivo_padronizado: 'NO SHOW',
+          motivo_padronizado: 'OUTRO',
           observacao: 'Caminhão não compareceu até o fechamento da balança'
         }
       }
@@ -286,13 +286,13 @@ async function main() {
       numero_pedido_compra: 'PED-AGO',
       data_agendada: agosto,
       horario_agendado: '08:00',
-      tipo_acondicionamento: 'Sacaria',
+      tipo_acondicionamento: 'BIG_BAG',
       status_agendamento: 'CONCLUIDO',
       qtd_chapas_prevista: 4,
       cargas: {
         create: {
           peso_total: 30000,
-          tipo_acondicionamento: 'Sacaria',
+          tipo_acondicionamento: 'BIG_BAG',
           destinos: { create: { id_armazem: armazem1.id_armazem } }
         }
       },
@@ -349,13 +349,13 @@ async function main() {
       numero_pedido_compra: 'PED-SET',
       data_agendada: setembro,
       horario_agendado: '10:00',
-      tipo_acondicionamento: 'Paletizado',
+      tipo_acondicionamento: 'PALETIZADO',
       status_agendamento: 'CONCLUIDO',
       qtd_chapas_prevista: 2,
       cargas: {
         create: {
           peso_total: 5000,
-          tipo_acondicionamento: 'Paletizado',
+          tipo_acondicionamento: 'PALETIZADO',
           destinos: { create: { id_armazem: armazem2.id_armazem } }
         }
       },
@@ -387,7 +387,7 @@ async function main() {
       complemento_diaria_pago: 130.34, // Paga complemento -> Gera sobra
       itens: {
         create: {
-          tipo_servico: 'PALETIZADO',
+          tipo_servico: 'SERVICOS_DIVERSOS',
           qtd_descarga: 5000,
           quantidade: 5000,
           preco_unitario: 0.01,
