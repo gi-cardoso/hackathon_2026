@@ -1,13 +1,14 @@
 .dashboard-page { display: grid; gap: var(--space-4); }
+.dashboard-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
 .dashboard-intro { max-width: 680px; }
 .dashboard-eyebrow, .dashboard-card-label { color: var(--blue-700); display: block; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 .dashboard-intro h2 { font-size: clamp(1.8rem, 4vw, 3rem); margin-bottom: var(--space-2); }
 .dashboard-intro p { color: var(--muted); font-size: clamp(1rem, 2vw, 1.15rem); margin: 0; }
-.dashboard-new-button { align-items: center; background: var(--yellow-500); border-radius: var(--radius-md); box-shadow: var(--shadow-md); color: var(--blue-900); display: grid; gap: 0.2rem; max-width: 760px; min-height: 70px; padding: var(--space-3); position: relative; }
+.dashboard-new-button { align-items: center; background: var(--yellow-500); border-radius: var(--radius-md); box-shadow: var(--shadow-md); color: var(--blue-900); display: grid; gap: 0.1rem; max-width: 360px; min-height: auto; padding: var(--space-2) 3rem var(--space-2) var(--space-3); position: relative; }
 .dashboard-new-button:hover { color: var(--blue-900); transform: translateY(-2px); }
-.dashboard-new-button strong { font-size: 1rem; }
-.dashboard-new-button span { color: #4D4300; font-size: 0.8rem; }
-.dashboard-new-button b { font-size: 1.6rem; line-height: 1; position: absolute; right: var(--space-3); top: 50%; transform: translateY(-50%); }
+.dashboard-new-button strong { font-size: 0.95rem; }
+.dashboard-new-button span { color: #4D4300; font-size: 0.75rem; }
+.dashboard-new-button b { font-size: 1.4rem; line-height: 1; position: absolute; right: var(--space-2); top: 50%; transform: translateY(-50%); }
 .dashboard-grid { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 .dashboard-grid h3 { margin: 0.35rem 0 var(--space-3); }
 .fornecedor-details { display: grid; gap: var(--space-2); margin: 0; }
