@@ -253,3 +253,92 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export interface DashboardOperacaoResponse {
+  periodo: {
+    data_inicio: string;
+    data_fim: string;
+    timezone: string;
+  };
+  resumo: {
+    cargas_recebidas: number;
+    recebimentos_concluidos: number;
+    nao_recebimentos: number;
+    peso_total_recebido_kg: number;
+    fornecedores_atendidos: number;
+    armazens_utilizados: number;
+  };
+  cargas_recebidas_por_dia: Array<{
+    data: string;
+    quantidade_cargas: number;
+    peso_total_kg: number;
+  }>;
+  cargas_recebidas_por_armazem: Array<{
+    id_armazem: number;
+    nome_armazem: string;
+    quantidade_cargas: number;
+    peso_total_kg: number;
+    percentual_do_total: number;
+  }>;
+  tempos_operacionais: {
+    tempo_medio_espera_minutos: number;
+    tempo_medio_descarga_minutos: number;
+    tempo_medio_total_no_armazem_minutos: number;
+  };
+  fornecedores_com_maior_volume: Array<{
+    id_fornecedor: number;
+    nome_fornecedor: string;
+    quantidade_cargas: number;
+    peso_total_kg: number;
+    percentual_do_total: number;
+  }>;
+  custo_estimado_mao_de_obra: {
+    valor_total: number;
+    boletins: {
+      custo_registrado: number;
+      diarias_equivalentes: number;
+    };
+  };
+  dimensionamento_chapas: {
+    situacao_geral: string;
+    chapas_previstos_total: number;
+    chapas_utilizados_total: number;
+  };
+}
+
+export async function getDashboardOperacao(dataInicio: string, dataFim: string) {
+  const response = await api.get<DashboardOperacaoResponse>(`/dashboard/operacao?data_inicio=${dataInicio}&data_fim=${dataFim}`);
+  return response.data;
+}
+
+export interface UserResponse {
+  id_usuario: number;
+  nome: string;
+  matricula: string;
+  email: string;
+  ativo: boolean;
+  role: string;
+}
+
+export interface CreateUserPayload {
+  nome: string;
+  email: string;
+  matricula: string;
+  senha?: string;
+  role: string;
+  ativo?: boolean;
+}
+
+export async function getUsers() {
+  const response = await api.get<UserResponse[]>('/users');
+  return response.data;
+}
+
+export async function createUser(payload: CreateUserPayload) {
+  const response = await api.post<UserResponse>('/users', payload);
+  return response.data;
+}
+
+export async function deleteUser(id: number) {
+  await api.delete(`/users/${id}`);
+}

@@ -1,0 +1,1 @@
+export { IndicadoresPage } from './IndicadoresPage';

@@ -20,6 +20,8 @@ import {
   RegistrarRecebimentoPage,
 } from './features/recebimentos/pages/RecebimentosPage';
 import { BoletinsPage } from './features/boletins/pages/BoletinsPage';
+import { IndicadoresPage } from './features/bi/pages';
+import { UsersPage } from './features/usuarios/pages';
 import './App.css';
 import { NotFound } from './pages/NotFound';
 
@@ -185,6 +187,10 @@ function App() {
                         ? <BoletinsPage />
                       : module.path === 'armazem' && page.slug === 'recebimentos'
                         ? <RegistrarRecebimentoPage />
+                      : module.path === 'bi' && page.slug === 'indicadores'
+                        ? <IndicadoresPage />
+                      : module.path === 'usuarios' && page.slug === 'lista'
+                        ? <UsersPage />
                       : <ModuleStatusPage modulePath={module.path} moduleTitle={module.title} title={page.title} />}
                   />
                 ))}
