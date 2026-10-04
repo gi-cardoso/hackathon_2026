@@ -70,7 +70,7 @@ export function IndicadoresPage() {
       <Breadcrumb
         items={[
           { label: 'Início', path: '/bi' },
-          { label: 'DashBoard' },
+          { label: 'Dashboard' },
           { label: 'Indicadores' },
         ]}
       />

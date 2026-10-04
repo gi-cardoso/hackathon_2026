@@ -10,7 +10,7 @@ export function Sidebar() {
     { path: '/agendamentos', label: 'Agendamentos', roles: ['COMPRAS', 'ARMAZEM', 'ADMIN'] },
     { path: '/armazem', label: 'Armazém', roles: ['ARMAZEM', 'ADMIN'] },
     { path: '/boletim', label: 'Boletim', roles: ['BOLETIM', 'ADMIN'] },
-    { path: '/bi', label: 'DashBoard', roles: ['GESTOR', 'ADMIN'] },
+    { path: '/bi', label: 'Dashboard', roles: ['GESTOR', 'ADMIN'] },
     { path: '/usuarios', label: 'Usuários', roles: ['ADMIN'] },
     { path: '/configuracoes', label: 'Configurações', roles: ['ADMIN'] },
   ];

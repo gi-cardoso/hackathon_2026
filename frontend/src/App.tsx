@@ -70,7 +70,7 @@ const modules = [
   },
   {
     path: 'bi',
-    title: 'DashBoard',
+    title: 'Dashboard',
     description: 'Indicadores para decisão operacional.',
     roles: ['GESTOR', 'ADMIN'],
     pages: [
