@@ -20,6 +20,7 @@ import {
   RegistrarRecebimentoPage,
 } from './features/recebimentos/pages/RecebimentosPage';
 import { BoletinsPage } from './features/boletins/pages/BoletinsPage';
+import { PersistidosPage } from './features/boletins/pages/PersistidosPage';
 import { IndicadoresPage } from './features/bi/pages';
 import { UsersPage } from './features/usuarios/pages';
 import './App.css';
@@ -65,6 +66,7 @@ const modules = [
     roles: ['BOLETIM', 'ADMIN'],
     pages: [
       { slug: 'publicacoes', label: 'Publicações', title: 'Publicações' },
+      { slug: 'persistidos', label: 'Persistidos', title: 'Boletins Persistidos' },
     ],
   },
   {
@@ -167,6 +169,8 @@ function App() {
                         ? <FornecedoresPage />
                       : module.path === 'boletim' && page.slug === 'publicacoes'
                         ? <BoletinsPage />
+                      : module.path === 'boletim' && page.slug === 'persistidos'
+                        ? <PersistidosPage />
                       : module.path === 'armazem' && page.slug === 'recebimentos'
                         ? <RegistrarRecebimentoPage />
                       : module.path === 'bi' && page.slug === 'indicadores'
@@ -176,7 +180,7 @@ function App() {
                       : <ModuleStatusPage modulePath={module.path} moduleTitle={module.title} title={page.title} />}
                   />
                 ))}
-                {module.path === 'boletim' && <Route path="publicacoes/:id" element={<BoletinsPage />} />}
+                {module.path === 'boletim' && <Route path="persistidos/:id" element={<PersistidosPage />} />}
                 {module.path === 'armazem' && <Route path="recebimentos/:id" element={<RecebimentoDetailPage />} />}
               </Route>
             );

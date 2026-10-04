@@ -23,7 +23,6 @@ import type {
   Armazem,
   Equipamento,
   AgendamentoOperacao,
-  NaoRecebimentoPayload,
   NaoRecebimentoResponse,
 } from '../../../services/api';
 import './styles.css';

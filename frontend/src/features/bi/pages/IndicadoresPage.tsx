@@ -4,7 +4,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { PageContent } from '../../../components/layout/PageContent';
 import { Card } from '../../../components/ui/Card';
-import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { getApiError, getDashboardOperacao } from '../../../services/api';
 import type { DashboardOperacaoResponse } from '../../../services/api';

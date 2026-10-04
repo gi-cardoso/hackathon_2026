@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -12,12 +11,10 @@ import { Input } from '../../../components/ui/Input';
 import {
   createBoletim,
   getApiError,
-  getBoletim,
-  getBoletins,
   getChapas,
   tiposItemBoletim,
 } from '../../../services/api';
-import type { BoletimResponse, TipoItemBoletim, ChapaResponse } from '../../../services/api';
+import type { TipoItemBoletim, ChapaResponse } from '../../../services/api';
 import './styles.css';
 
 type ProductionField = {
@@ -48,15 +45,6 @@ const initialTeam: TeamField = {
   jornada: '',
 };
 
-function formatDecimal(value: number | string) {
-  return Number(value).toLocaleString('pt-BR', { maximumFractionDigits: 4 });
-}
-
-function formatDate(value: string) {
-  const [year, month, day] = value.substring(0, 10).split('-');
-  return `${day}/${month}/${year}`;
-}
-
 function labelize(value: string) {
   return value.toLowerCase().replaceAll('_', ' ');
 }
@@ -67,31 +55,11 @@ function parseQuantity(value: string) {
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 }
 
-function BoletimSummary({ boletim }: { boletim: BoletimResponse }) {
-  return <Card className="boletim-card">
-    <div className="boletim-card-heading"><div><span className="card-kicker">Boletim #{boletim.id_boletim}</span><h3>{formatDate(boletim.data)}</h3></div><span className="ui-status ui-status-aprovado">Registrado</span></div>
-    <dl className="detail-list"><div><dt>Armazém</dt><dd>{boletim.armazem?.nome_armazem || `ID ${boletim.id_armazem ?? 'não informado'}`}</dd></div><div><dt>Produção</dt><dd>{formatDecimal(boletim.valor_produzido_total)}</dd></div><div><dt>Diárias equivalentes</dt><dd>{formatDecimal(boletim.diarias_equivalentes_total)}</dd></div><div><dt>Equipe</dt><dd>{boletim.equipes.length} membro(s)</dd></div></dl>
-    <Link className="boletim-card-link" to={`/boletim/publicacoes/${boletim.id_boletim}`}>Ver detalhes</Link>
-  </Card>;
-}
-
-function BoletimDetail({ boletim }: { boletim: BoletimResponse }) {
-  return <div className="boletim-detail-grid">
-    <Card><span className="card-kicker">Boletim #{boletim.id_boletim}</span><h3>{formatDate(boletim.data)}</h3><dl className="detail-list"><div><dt>Armazém</dt><dd>{boletim.armazem?.nome_armazem || `ID ${boletim.id_armazem ?? 'não informado'}`}</dd></div><div><dt>Responsável informado</dt><dd>{boletim.responsavel_id ?? 'Não informado'}</dd></div><div><dt>Produção total</dt><dd>{formatDecimal(boletim.valor_produzido_total)}</dd></div><div><dt>Complemento de diária</dt><dd>{formatDecimal(boletim.complemento_diaria_pago)}</dd></div></dl></Card>
-    <Card><h3>Itens de produção</h3><div className="boletim-data-list">{boletim.itens.map((item) => <div key={item.id_item_boletim}><span>{labelize(item.tipo_servico)}</span><strong>{formatDecimal(item.quantidade)}</strong></div>)}</div></Card>
-    <Card><h3>Equipe</h3><div className="boletim-data-list">{boletim.equipes.map((member) => <div key={member.id}><span>{member.matricula_chapa || 'Matrícula não informada'}</span><strong>{member.tipo_jornada}</strong></div>)}</div></Card>
-  </div>;
-}
-
 export function BoletinsPage() {
-  const { id } = useParams();
-  const [boletins, setBoletins] = useState<BoletimResponse[]>([]);
-  const [boletim, setBoletim] = useState<BoletimResponse | null>(null);
   const [production, setProduction] = useState<ProductionField[]>([]);
   const [team, setTeam] = useState<TeamField[]>([]);
   const [date, setDate] = useState('');
   const [responsibleId, setResponsibleId] = useState('');
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -99,21 +67,15 @@ export function BoletinsPage() {
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
     setError('');
-    const request = id ? getBoletim(Number(id)) : getBoletins();
-    Promise.all([request, getChapas()]).then(([response, chapasResponse]) => {
+    getChapas().then((chapasResponse) => {
       if (!active) return;
-      if (id) setBoletim(response as BoletimResponse);
-      else setBoletins(response as BoletimResponse[]);
       setChapas(chapasResponse.filter(u => u.ativo));
     }).catch((requestError: unknown) => {
       if (active) setError(getApiError(requestError));
-    }).finally(() => {
-      if (active) setLoading(false);
     });
     return () => { active = false; };
-  }, [id]);
+  }, []);
 
   const updateProduction = (fieldId: number, field: keyof Omit<ProductionField, 'id'>, value: string) => {
     setProduction((current) => current.map((item) => item.id === fieldId ? { ...item, [field]: value } : item));
@@ -167,7 +129,6 @@ export function BoletinsPage() {
         producao: productionPayload,
         equipe: teamPayload as Array<{ matricula: string; jornada: 'COMPLETA' | 'MEIA' }>,
       });
-      setBoletins((current) => [response.boletim, ...current]);
       setProduction([]);
       setTeam([]);
       setDate('');
@@ -180,9 +141,5 @@ export function BoletinsPage() {
     }
   };
 
-  if (id) {
-    return <><Breadcrumb items={[{ label: 'Início', path: '/boletim' }, { label: 'Boletim' }, { label: 'Publicações' }, { label: `#${id}` }]} /><PageContent><div className="boletim-heading"><div><h2>Detalhes do boletim</h2><p>Consulta do boletim persistido no sistema.</p></div><Link className="ui-button ui-button-ghost" to="/boletim/publicacoes">Voltar para publicações</Link></div>{loading && <Card><p>Carregando boletim...</p></Card>}{error && <div className="internal-alert" role="alert">{error}</div>}{!loading && !error && boletim && <BoletimDetail boletim={boletim} />}</PageContent></>;
-  }
-
-  return <><Breadcrumb items={[{ label: 'Início', path: '/boletim' }, { label: 'Boletim' }, { label: 'Publicações' }]} /><PageContent><div className="boletim-heading"><div><h2>Boletins</h2><p>Registre a produção diária e consulte os boletins já persistidos.</p></div></div>{error && <div className="internal-alert" role="alert">{error}</div>}<Card><form className="boletim-form" onSubmit={submit}><div className="boletim-form-grid"><label>Data do boletim<DatePicker selected={date ? new Date(`${date}T00:00:00`) : null} onChange={(d: Date | null) => { if (d) setDate(d.toISOString().split('T')[0]); else setDate(''); }} dateFormat="dd/MM/yyyy" placeholderText="Selecione uma data" className="ui-input" required /></label><label>Responsável (ID opcional)<Input type="number" min="1" step="1" value={responsibleId} onChange={(event) => setResponsibleId(event.target.value)} /><small>O backend aceita esse identificador no corpo da requisição.</small></label></div><div className="boletim-section-heading"><div><h3>Produção</h3><p>Use os tipos e quantidades aceitos pelo backend.</p></div><Button type="button" variant="ghost" onClick={() => setProduction((current) => [...current, { ...initialProduction, id: Date.now() }])}>Adicionar item</Button></div>{production.length === 0 && <p className="boletim-muted">Nenhum item adicionado.</p>}<div className="boletim-row-list">{production.map((item) => <div className="boletim-production-row" key={item.id}><label>Tipo<select className="ui-select" value={item.tipoItem} onChange={(event) => updateProduction(item.id, 'tipoItem', event.target.value)}><option value="">Selecione</option>{tiposItemBoletim.map((type) => <option value={type} key={type}>{labelize(type)}</option>)}</select></label><label>Descarga<Input type="number" min="0" step="any" value={item.descarga} onChange={(event) => updateProduction(item.id, 'descarga', event.target.value)} /></label><label>Remoção<Input type="number" min="0" step="any" value={item.remocao} onChange={(event) => updateProduction(item.id, 'remocao', event.target.value)} /></label><label>Transferência<Input type="number" min="0" step="any" value={item.transferencia} onChange={(event) => updateProduction(item.id, 'transferencia', event.target.value)} /></label><Button type="button" variant="danger" onClick={() => setProduction((current) => current.filter((entry) => entry.id !== item.id))}>Remover</Button></div>)}</div><div className="boletim-section-heading"><div><h3>Equipe</h3><p>Informe as matrículas existentes e a jornada de cada membro.</p></div><Button type="button" variant="ghost" onClick={() => setTeam((current) => [...current, { ...initialTeam, id: Date.now() }])}>Adicionar membro</Button></div>{team.length === 0 && <p className="boletim-muted">Nenhum membro adicionado.</p>}<div className="boletim-row-list">{team.map((member) => <div className="boletim-team-row" key={member.id}><label>Matrícula (Chapa)<select className="ui-select" value={member.matricula} onChange={(event) => updateTeam(member.id, 'matricula', event.target.value)}><option value="">Selecione</option>{chapas.map((chapa) => <option key={chapa.matricula} value={chapa.matricula}>{chapa.nome} ({chapa.matricula})</option>)}</select></label><label>Jornada<select className="ui-select" value={member.jornada} onChange={(event) => updateTeam(member.id, 'jornada', event.target.value)}><option value="">Selecione</option><option value="COMPLETA">Completa</option><option value="MEIA">Meia</option></select></label><Button type="button" variant="danger" onClick={() => setTeam((current) => current.filter((entry) => entry.id !== member.id))}>Remover</Button></div>)}</div><div className="boletim-actions"><Button type="submit" loading={submitting}>Salvar boletim</Button></div></form></Card><div className="boletim-list-heading"><h3>Boletins persistidos</h3></div>{loading && <Card><p>Carregando boletins...</p></Card>}{!loading && !error && boletins.length === 0 && <Card><p className="boletim-muted">Nenhum boletim encontrado.</p></Card>}{!loading && !error && boletins.length > 0 && <div className="boletim-list">{boletins.map((item) => <BoletimSummary key={item.id_boletim} boletim={item} />)}</div>}</PageContent></>;
+  return <><Breadcrumb items={[{ label: 'Início', path: '/boletim' }, { label: 'Boletim' }, { label: 'Publicações' }]} /><PageContent><div className="boletim-heading"><div><h2>Boletins</h2><p>Registre a produção diária de um armazém.</p></div></div>{error && <div className="internal-alert" role="alert">{error}</div>}<Card><form className="boletim-form" onSubmit={submit}><div className="boletim-form-grid"><label>Data do boletim<DatePicker selected={date ? new Date(`${date}T00:00:00`) : null} onChange={(d: Date | null) => { if (d) setDate(d.toISOString().split('T')[0]); else setDate(''); }} dateFormat="dd/MM/yyyy" placeholderText="Selecione uma data" className="ui-input" required /></label><label>Responsável (ID opcional)<Input type="number" min="1" step="1" value={responsibleId} onChange={(event) => setResponsibleId(event.target.value)} /><small>O backend aceita esse identificador no corpo da requisição.</small></label></div><div className="boletim-section-heading"><div><h3>Produção</h3><p>Use os tipos e quantidades aceitos pelo backend.</p></div><Button type="button" variant="ghost" onClick={() => setProduction((current) => [...current, { ...initialProduction, id: Date.now() }])}>Adicionar item</Button></div>{production.length === 0 && <p className="boletim-muted">Nenhum item adicionado.</p>}<div className="boletim-row-list">{production.map((item) => <div className="boletim-production-row" key={item.id}><label>Tipo<select className="ui-select" value={item.tipoItem} onChange={(event) => updateProduction(item.id, 'tipoItem', event.target.value)}><option value="">Selecione</option>{tiposItemBoletim.map((type) => <option value={type} key={type}>{labelize(type)}</option>)}</select></label><label>Descarga<Input type="number" min="0" step="any" value={item.descarga} onChange={(event) => updateProduction(item.id, 'descarga', event.target.value)} /></label><label>Remoção<Input type="number" min="0" step="any" value={item.remocao} onChange={(event) => updateProduction(item.id, 'remocao', event.target.value)} /></label><label>Transferência<Input type="number" min="0" step="any" value={item.transferencia} onChange={(event) => updateProduction(item.id, 'transferencia', event.target.value)} /></label><Button type="button" variant="danger" onClick={() => setProduction((current) => current.filter((entry) => entry.id !== item.id))}>Remover</Button></div>)}</div><div className="boletim-section-heading"><div><h3>Equipe</h3><p>Informe as matrículas existentes e a jornada de cada membro.</p></div><Button type="button" variant="ghost" onClick={() => setTeam((current) => [...current, { ...initialTeam, id: Date.now() }])}>Adicionar membro</Button></div>{team.length === 0 && <p className="boletim-muted">Nenhum membro adicionado.</p>}<div className="boletim-row-list">{team.map((member) => <div className="boletim-team-row" key={member.id}><label>Matrícula (Chapa)<select className="ui-select" value={member.matricula} onChange={(event) => updateTeam(member.id, 'matricula', event.target.value)}><option value="">Selecione</option>{chapas.map((chapa) => <option key={chapa.matricula} value={chapa.matricula}>{chapa.nome} ({chapa.matricula})</option>)}</select></label><label>Jornada<select className="ui-select" value={member.jornada} onChange={(event) => updateTeam(member.id, 'jornada', event.target.value)}><option value="">Selecione</option><option value="COMPLETA">Completa</option><option value="MEIA">Meia</option></select></label><Button type="button" variant="danger" onClick={() => setTeam((current) => current.filter((entry) => entry.id !== member.id))}>Remover</Button></div>)}</div><div className="boletim-actions"><Button type="submit" loading={submitting}>Salvar boletim</Button></div></form></Card></PageContent></>;
 }
