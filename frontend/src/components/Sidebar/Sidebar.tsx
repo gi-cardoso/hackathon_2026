@@ -12,7 +12,6 @@ export function Sidebar() {
     { path: '/boletim', label: 'Boletim', roles: ['BOLETIM', 'ADMIN'] },
     { path: '/bi', label: 'Dashboard', roles: ['GESTOR', 'ADMIN'] },
     { path: '/usuarios', label: 'Usuários', roles: ['ADMIN'] },
-    { path: '/configuracoes', label: 'Configurações', roles: ['ADMIN'] },
   ];
 
   return (

@@ -85,15 +85,6 @@ const modules = [
       { slug: 'lista', label: 'Lista de usuários', title: 'Lista de usuários' },
     ],
   },
-  {
-    path: 'configuracoes',
-    title: 'Configurações',
-    description: 'Preferências e integrações do portal.',
-    roles: ['ADMIN'],
-    pages: [
-      { slug: 'preferencias', label: 'Preferências', title: 'Preferências' },
-    ],
-  },
 ] as const;
 
 function App() {
