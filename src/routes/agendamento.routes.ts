@@ -26,6 +26,22 @@ agendamentoRouter.get(
   AgendamentoController.listMine,
 );
 
+agendamentoRouter.patch(
+  "/:id/cancelar",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.enforceFornecedorIdentity,
+  AuthMiddleware.isFornecedor,
+  AgendamentoController.cancelar,
+);
+
+agendamentoRouter.patch(
+  "/:id/reagendar",
+  AuthMiddleware.verifyToken,
+  AuthMiddleware.enforceFornecedorIdentity,
+  AuthMiddleware.isFornecedor,
+  AgendamentoController.reagendar,
+);
+
 agendamentoRouter.get(
   "/analise/compras",
   AuthMiddleware.verifyToken,
