@@ -1,6 +1,6 @@
 import './ui.css';
 
-type Status = 'AGENDADO' | 'NF_VALIDADA' | 'NO_PATIO' | 'DESCARREGANDO' | 'CONCLUIDO' | 'CANCELADO' | 'PENDENTE' | 'APROVADO' | 'REJEITADO';
+type Status = 'AGENDADO' | 'NF_VALIDADA' | 'NO_PATIO' | 'DESCARREGANDO' | 'CONCLUIDO' | 'CANCELADO' | 'PENDENTE' | 'APROVADO' | 'REJEITADO' | 'REAGENDADO';
 
 const labels: Record<Status, string> = {
   AGENDADO: 'Agendado',
@@ -12,6 +12,7 @@ const labels: Record<Status, string> = {
   PENDENTE: 'Pendente',
   APROVADO: 'Aprovado',
   REJEITADO: 'Rejeitado',
+  REAGENDADO: 'Reagendado',
 };
 
 export function StatusBadge({ status }: { status: string }) {

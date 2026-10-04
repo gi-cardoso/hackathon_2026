@@ -166,7 +166,7 @@ export function AgendamentoDetailPage() {
       <PageContent>
         <span className="page-eyebrow">Análise de Compras</span>
         <h2>Agendamento #{id}</h2>
-        {message && <div className="internal-alert" role="status">{message}</div>}
+        {message && <div className={`internal-alert ${message.includes('aprovado') || message.includes('rejeitado') ? 'is-success' : ''}`} role="status">{message}</div>}
         {loading && <Card><p>Carregando dados do agendamento...</p></Card>}
         {!loading && item && <div className="detail-grid">
           <Card>
