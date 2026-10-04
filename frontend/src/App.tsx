@@ -66,7 +66,6 @@ const modules = [
     roles: ['BOLETIM', 'ADMIN'],
     pages: [
       { slug: 'publicacoes', label: 'Publicações', title: 'Publicações' },
-      { slug: 'comunicados', label: 'Comunicados', title: 'Comunicados' },
     ],
   },
   {
