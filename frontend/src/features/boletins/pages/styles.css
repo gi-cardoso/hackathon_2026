@@ -1,0 +1,151 @@
+.boletim-heading {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.boletim-heading h2 {
+  margin: 0.35rem 0;
+}
+
+.boletim-heading p,
+.boletim-section-heading p,
+.boletim-muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.boletim-form,
+.boletim-row-list,
+.boletim-list {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.boletim-form-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.boletim-form label,
+.boletim-production-row label,
+.boletim-team-row label {
+  color: var(--ink);
+  display: grid;
+  font-weight: 700;
+  gap: 0.45rem;
+}
+
+.boletim-form small {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.boletim-section-heading,
+.boletim-list-heading,
+.boletim-card-heading {
+  align-items: center;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.boletim-section-heading {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-4);
+}
+
+.boletim-section-heading h3,
+.boletim-list-heading h3,
+.boletim-card-heading h3 {
+  margin: 0 0 0.35rem;
+}
+
+.boletim-production-row,
+.boletim-team-row {
+  align-items: end;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.boletim-production-row {
+  grid-template-columns: minmax(190px, 1.5fr) repeat(3, minmax(100px, 1fr)) auto;
+}
+
+.boletim-team-row {
+  grid-template-columns: minmax(180px, 1fr) minmax(160px, 1fr) auto;
+}
+
+.boletim-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.boletim-list-heading {
+  margin: var(--space-5) 0 var(--space-3);
+}
+
+.boletim-card,
+.boletim-detail-grid .ui-card {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.boletim-card-heading h3,
+.boletim-card p {
+  margin: 0;
+}
+
+.boletim-card-link {
+  color: var(--blue-700);
+  font-weight: 800;
+  margin-top: var(--space-2);
+}
+
+.boletim-detail-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+}
+
+.boletim-detail-grid h3 {
+  margin: 0;
+}
+
+.boletim-data-list {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.boletim-data-list div {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding-bottom: var(--space-2);
+}
+
+@media (max-width: 760px) {
+  .boletim-form-grid,
+  .boletim-production-row,
+  .boletim-team-row {
+    grid-template-columns: 1fr;
+  }
+
+  .boletim-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .boletim-section-heading .ui-button,
+  .boletim-production-row .ui-button,
+  .boletim-team-row .ui-button {
+    width: 100%;
+  }
+}

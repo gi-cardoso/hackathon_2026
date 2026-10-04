@@ -66,6 +66,93 @@ export async function getRecebimento(id: number) {
   return response.data;
 }
 
+export const tiposItemBoletim = [
+  'SACARIA_MALAS_25',
+  'SACARIA_MALAS_40',
+  'SACARIA_MALAS_50',
+  'SACARIA_FARDO_250',
+  'SACARIA_FARDO_500',
+  'PECAS',
+  'MAQUINAS_EQUIPAMENTOS',
+  'AGROQUIMICO',
+  'FERTILIZANTES',
+  'SEMENTES',
+  'MEDICAMENTOS',
+  'ALIMENTACAO_ANIMAL',
+  'ACESSORIOS_AGROPECUARIOS',
+  'SERVICOS_DIVERSOS',
+] as const;
+
+export type TipoItemBoletim = typeof tiposItemBoletim[number];
+
+export interface BoletimPayload {
+  data: string;
+  responsavelId?: number;
+  producao: Array<{
+    tipoItem: TipoItemBoletim;
+    descarga: number;
+    remocao: number;
+    transferencia: number;
+  }>;
+  equipe: Array<{
+    matricula: string;
+    jornada: 'COMPLETA' | 'MEIA';
+  }>;
+}
+
+export interface BoletimResponse {
+  id_boletim: number;
+  id_armazem: number | null;
+  data: string;
+  responsavel_id: number | null;
+  diarias_equivalentes_total: number | string;
+  valor_produzido_total: number | string;
+  complemento_diaria_pago: number | string;
+  armazem?: { nome_armazem?: string } | null;
+  itens: Array<{
+    id_item_boletim: number;
+    tipo_servico: string;
+    qtd_descarga: number | string;
+    qtd_remocao: number | string;
+    qtd_transferencia: number | string;
+    quantidade: number | string;
+    preco_unitario: number | string;
+    valor_producao: number | string;
+  }>;
+  equipes: Array<{
+    id: number;
+    matricula_chapa: string | null;
+    tipo_jornada: string;
+  }>;
+}
+
+export interface CriarBoletimResponse {
+  mensagem: string;
+  boletim: BoletimResponse;
+  calculo: {
+    producaoTotal: number;
+    diariasEquivalentes: number;
+    valorPorDiaria: number;
+    complemento: number;
+    totalPagar: number;
+  };
+}
+
+export async function createBoletim(payload: BoletimPayload) {
+  const response = await api.post<CriarBoletimResponse>('/boletins', payload);
+  return response.data;
+}
+
+export async function getBoletins() {
+  const response = await api.get<BoletimResponse[]>('/boletins');
+  return response.data;
+}
+
+export async function getBoletim(id: number) {
+  const response = await api.get<BoletimResponse>(`/boletins/${id}`);
+  return response.data;
+}
+
 // Interceptor para adicionar o token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('@COCAPEC:token');

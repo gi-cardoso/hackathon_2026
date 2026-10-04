@@ -19,6 +19,7 @@ import {
   RecebimentoDetailPage,
   RegistrarRecebimentoPage,
 } from './features/recebimentos/pages/RecebimentosPage';
+import { BoletinsPage } from './features/boletins/pages/BoletinsPage';
 import './App.css';
 import { NotFound } from './pages/NotFound';
 
@@ -197,9 +198,12 @@ function App() {
                       ? <AgendamentosListPage />
                       : module.path === 'compras' && page.slug === 'fornecedores'
                         ? <FornecedoresPage />
+                      : module.path === 'boletim' && page.slug === 'publicacoes'
+                        ? <BoletinsPage />
                       : <ModuleStatusPage modulePath={module.path} moduleTitle={module.title} title={page.title} />}
                   />
                 ))}
+                {module.path === 'boletim' && <Route path="publicacoes/:id" element={<BoletinsPage />} />}
               </Route>
             );
           })}
