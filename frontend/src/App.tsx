@@ -75,7 +75,6 @@ const modules = [
     roles: ['BI', 'GESTOR', 'ADMIN'],
     pages: [
       { slug: 'indicadores', label: 'Indicadores', title: 'Indicadores' },
-      { slug: 'relatorios', label: 'Relatórios', title: 'Relatórios' },
     ],
   },
   {
