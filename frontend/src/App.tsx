@@ -15,6 +15,10 @@ import {
   AgendamentoDetailPage,
   AgendamentosListPage,
 } from './features/agendamentos/pages';
+import {
+  RecebimentoDetailPage,
+  RegistrarRecebimentoPage,
+} from './features/recebimentos/pages/RecebimentosPage';
 import './App.css';
 import { NotFound } from './pages/NotFound';
 
@@ -140,6 +144,25 @@ function App() {
             <Route path="lista" element={<AgendamentosListPage />} />
             <Route path="agenda-operacional" element={<AgendaOperacionalPage />} />
             <Route path=":id" element={<AgendamentoDetailPage />} />
+          </Route>
+          <Route
+            path="/recebimentos"
+            element={
+              <PrivateRoute>
+                <RoleRoute roles={['ARMAZEM', 'ADMIN']}>
+                <AppLayout>
+                  <ModuleLayout
+                    title="Recebimentos"
+                    description="Registro das operações realizadas no armazém."
+                    menuItems={[{ label: 'Registrar recebimento', path: '/recebimentos' }]}
+                  />
+                </AppLayout>
+                </RoleRoute>
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<RegistrarRecebimentoPage />} />
+            <Route path=":id" element={<RecebimentoDetailPage />} />
           </Route>
           {modules.map((module) => {
             const menuItems: ModuleMenuItem[] = module.pages.map((page) => ({
