@@ -93,7 +93,6 @@ const modules = [
     roles: ['ADMIN'],
     pages: [
       { slug: 'preferencias', label: 'Preferências', title: 'Preferências' },
-      { slug: 'integracoes', label: 'Integrações', title: 'Integrações' },
     ],
   },
 ] as const;
