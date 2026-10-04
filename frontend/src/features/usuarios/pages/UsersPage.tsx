@@ -96,7 +96,7 @@ export function UsersPage() {
       <PageContent>
         <div className="users-heading">
           <div>
-            <span className="page-eyebrow">Gerenciamento</span>
+            
             <h2>Lista de usuários</h2>
             <p>Gerencie os usuários do sistema e seus perfis de acesso.</p>
           </div>

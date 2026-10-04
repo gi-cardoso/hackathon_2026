@@ -247,7 +247,7 @@ export function RegistrarRecebimentoPage() {
       <PageContent>
         <div className="recebimento-heading">
           <div>
-            <span className="page-eyebrow">Operação de armazém</span>
+            
             <h2>Registrar operação</h2>
             <p>Registre a operação de um agendamento aprovado com os dados observados no armazém.</p>
           </div>
@@ -428,7 +428,7 @@ export function RecebimentoDetailPage() {
     <>
       <Breadcrumb items={[{ label: 'Armazém', path: '/armazem' }, { label: 'Recebimentos', path: '/armazem/recebimentos' }, { label: 'Detalhes' }]} />
       <PageContent>
-        <div className="recebimento-heading"><div><span className="page-eyebrow">Operação de armazém</span><h2>Detalhes do recebimento</h2><p>Consulta do recebimento #{id || 'selecionado'} no sistema.</p></div><Link className="ui-button ui-button-ghost" to="/armazem/recebimentos">Novo recebimento</Link></div>
+        <div className="recebimento-heading"><div><h2>Detalhes do recebimento</h2><p>Consulta do recebimento #{id || 'selecionado'} no sistema.</p></div><Link className="ui-button ui-button-ghost" to="/armazem/recebimentos">Novo recebimento</Link></div>
         {loading && <Card><p>Carregando dados do recebimento...</p></Card>}
         {error && <div className="internal-alert" role="alert">{error}</div>}
         {!loading && !error && recebimento && <div className="recebimento-detail-grid">

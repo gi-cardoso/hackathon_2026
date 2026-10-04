@@ -77,7 +77,7 @@ export function IndicadoresPage() {
       <PageContent>
         <div className="bi-heading">
           <div>
-            <span className="page-eyebrow">Visão Geral</span>
+            
             <h2>Indicadores Operacionais</h2>
             <p>Acompanhe os resultados e o fluxo do armazém e recebimento.</p>
           </div>

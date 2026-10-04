@@ -65,7 +65,7 @@ export function AgendamentosListPage() {
     <>
       <Breadcrumb items={[{ label: 'Início', path: '/agendamentos' }, { label: 'Agendamentos' }, { label: 'Lista de agendamentos' }]} />
       <PageContent>
-        <div className="page-heading-row"><div><span className="page-eyebrow">Compras / operação</span><h2>Agendamentos para análise</h2><p className="agendamentos-intro">Pedidos pendentes enviados pelos fornecedores.</p></div><label className="filter-control">Status<select value={status} onChange={(event) => setStatus(event.target.value as 'TODOS' | StatusAgendamento)}><option value="TODOS">Todos</option>{statusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label></div>
+        <div className="page-heading-row"><div><h2>Agendamentos para análise</h2><p className="agendamentos-intro">Pedidos pendentes enviados pelos fornecedores.</p></div><label className="filter-control">Status<select value={status} onChange={(event) => setStatus(event.target.value as 'TODOS' | StatusAgendamento)}><option value="TODOS">Todos</option>{statusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label></div>
         {error && <div className="internal-alert" role="alert">{error}</div>}
         {loading && <div className="internal-card-list"><Card><Skeleton className="skeleton-line" /><Skeleton className="skeleton-line short" /></Card><Card><Skeleton className="skeleton-line" /><Skeleton className="skeleton-line short" /></Card></div>}
         {!loading && !error && filteredItems.length === 0 && <EmptyState title="Nenhum agendamento encontrado" description="Quando houver pedidos pendentes, eles aparecerão aqui para análise." />}
