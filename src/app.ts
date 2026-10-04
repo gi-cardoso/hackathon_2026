@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { router } from "./routes";
 import { boletimRouter } from "./boletim/boletim.routes";
+import { AuthMiddleware } from "./middlewares/auth.middleware";
 
 const app: Application = express();
 
@@ -9,7 +10,7 @@ const app: Application = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/boletins", boletimRouter);
+app.use("/api/boletins", AuthMiddleware.verifyToken, boletimRouter);
 
 // Routes
 app.use("/api", router);

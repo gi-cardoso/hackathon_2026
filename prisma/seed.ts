@@ -230,7 +230,7 @@ async function main() {
       complemento_diaria_pago: 30.34, // Para atingir os 180,34 (2 * 90,17) - Sobra
       itens: {
         create: {
-          tipo_servico: 'SACARIA_FARDO_50',
+          tipo_servico: 'SACARIA_MALAS_50',
           qtd_descarga: 500,
           quantidade: 500,
           preco_unitario: 0.30,
@@ -324,7 +324,7 @@ async function main() {
       complemento_diaria_pago: 0,
       itens: {
         create: {
-          tipo_servico: 'SACARIA_FARDO_50',
+          tipo_servico: 'SACARIA_MALAS_50',
           qtd_descarga: 1000,
           quantidade: 1000,
           preco_unitario: 0.60,

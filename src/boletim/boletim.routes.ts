@@ -5,17 +5,54 @@ import { validarBoletim } from "./boletim.validacao";
 
 export const boletimRouter = Router();
 
-const ID_ARMAZEM_GERAL = 5;
+function parseIdPositivo(valor: unknown): number | undefined {
+  const numero = Number(valor);
+  return Number.isInteger(numero) && numero > 0 ? numero : undefined;
+}
+
+/**
+ * Resolve o armazém do boletim sem depender de ID fixo:
+ * 1. id_armazem/idArmazem enviado no corpo da requisição;
+ * 2. variável de ambiente BOLETIM_ARMAZEM_ID (se existir no banco);
+ * 3. primeiro armazém ativo (menor ID).
+ */
+async function resolverArmazemBoletim(body: Record<string, unknown>): Promise<number> {
+  const idInformado = parseIdPositivo(body?.id_armazem ?? body?.idArmazem);
+  if (idInformado) return idInformado;
+
+  const idEnv = parseIdPositivo(process.env.BOLETIM_ARMAZEM_ID);
+  if (idEnv) {
+    const armazemEnv = await prisma.armazem.findUnique({
+      where: { id_armazem: idEnv },
+      select: { id_armazem: true },
+    });
+    if (armazemEnv) return armazemEnv.id_armazem;
+  }
+
+  const primeiroAtivo = await prisma.armazem.findFirst({
+    where: { ativo: true },
+    orderBy: { id_armazem: "asc" },
+    select: { id_armazem: true },
+  });
+
+  if (!primeiroAtivo) {
+    throw new Error("Nenhum armazém ativo cadastrado para vincular o boletim.");
+  }
+
+  return primeiroAtivo.id_armazem;
+}
 
 boletimRouter.post("/", async (req, res) => {
   try {
+    const idArmazem = await resolverArmazemBoletim(req.body ?? {});
+
     const dadosValidados = validarBoletim({
       ...req.body,
-      idArmazem: ID_ARMAZEM_GERAL,
+      idArmazem,
     });
 
     const resultado = await criarBoletim({
-      idArmazem: ID_ARMAZEM_GERAL,
+      idArmazem,
       data: dadosValidados.dataConvertida,
       responsavelId: dadosValidados.responsavelId,
       producao: dadosValidados.producao,
@@ -42,10 +79,10 @@ boletimRouter.post("/", async (req, res) => {
 
 boletimRouter.get("/", async (req, res) => {
   try {
+    const idArmazemFiltro = parseIdPositivo(req.query.id_armazem);
+
     const boletins = await prisma.boletimDiario.findMany({
-      where: {
-        id_armazem: ID_ARMAZEM_GERAL,
-      },
+      where: idArmazemFiltro ? { id_armazem: idArmazemFiltro } : undefined,
       include: {
         armazem: true,
         itens: true,
@@ -77,7 +114,6 @@ boletimRouter.get("/:id", async (req, res) => {
     const boletim = await prisma.boletimDiario.findFirst({
       where: {
         id_boletim: id,
-        id_armazem: ID_ARMAZEM_GERAL,
       },
       include: {
         armazem: true,

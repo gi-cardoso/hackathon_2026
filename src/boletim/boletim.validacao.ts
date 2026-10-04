@@ -22,6 +22,12 @@ interface DadosBoletim {
 }
 
 export function validarBoletim(dados: DadosBoletim) {
+  if (!Array.isArray(dados.equipe)) {
+    throw new Error(
+      "O boletim precisa possuir pelo menos um chapa."
+    );
+  }
+
   dados.equipe = dados.equipe.map((membro) => ({
     ...membro,
     matricula: membro.matricula || membro.id_chapeiro || "",
