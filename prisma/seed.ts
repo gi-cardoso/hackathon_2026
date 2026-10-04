@@ -274,6 +274,135 @@ async function main() {
     }
   });
 
+  // --- NOVOS DADOS: Agosto (Falta) e Setembro (Sobra) ---
+  console.log('Criando dados para Agosto (Falta) e Setembro (Sobra)...');
+  const agosto = new Date('2026-08-15T00:00:00-03:00');
+  const setembro = new Date('2026-09-15T00:00:00-03:00');
+
+  // Agosto: Falta (Tempo de espera de 4 horas)
+  const agAgosto = await prisma.agendamento.create({
+    data: {
+      id_fornecedor: fornecedor1.id_fornecedor,
+      numero_pedido_compra: 'PED-AGO',
+      data_agendada: agosto,
+      horario_agendado: '08:00',
+      tipo_acondicionamento: 'Sacaria',
+      status_agendamento: 'CONCLUIDO',
+      qtd_chapas_prevista: 4,
+      cargas: {
+        create: {
+          peso_total: 30000,
+          tipo_acondicionamento: 'Sacaria',
+          destinos: { create: { id_armazem: armazem1.id_armazem } }
+        }
+      },
+      recebimentos: {
+        create: {
+          hora_chegada: new Date('2026-08-15T08:00:00-03:00'),
+          hora_entrada: new Date('2026-08-15T12:00:00-03:00'), // 4 horas de espera -> Falta de chapa
+          hora_saida: new Date('2026-08-15T16:00:00-03:00'),
+          status_recebimento: 'CONCLUIDO',
+          descargas: {
+            create: {
+              id_armazem: armazem1.id_armazem,
+              quantidade_movimentada: 30000,
+              qtd_chapas_utilizados: 4
+            }
+          }
+        }
+      }
+    }
+  });
+
+  await prisma.boletimDiario.create({
+    data: {
+      id_armazem: armazem1.id_armazem,
+      data: agosto,
+      responsavel_id: analista.id_usuario,
+      diarias_equivalentes_total: 4.0,
+      valor_produzido_total: 600.00, // Equipe se pagou, mas houve gargalo
+      complemento_diaria_pago: 0,
+      itens: {
+        create: {
+          tipo_servico: 'SACARIA_FARDO_50',
+          qtd_descarga: 1000,
+          quantidade: 1000,
+          preco_unitario: 0.60,
+          valor_producao: 600.00
+        }
+      },
+      equipes: {
+        create: [
+          { matricula_chapa: chapa1.matricula_chapa, tipo_jornada: 'COMPLETA' },
+          { matricula_chapa: chapa2.matricula_chapa, tipo_jornada: 'COMPLETA' },
+          { matricula_chapa: chapa3.matricula_chapa, tipo_jornada: 'COMPLETA' },
+          { matricula_chapa: chapa4.matricula_chapa, tipo_jornada: 'COMPLETA' }
+        ]
+      }
+    }
+  });
+
+  // Setembro: Sobra (Pouca produção, complemento alto)
+  const agSetembro = await prisma.agendamento.create({
+    data: {
+      id_fornecedor: fornecedor2.id_fornecedor,
+      numero_pedido_compra: 'PED-SET',
+      data_agendada: setembro,
+      horario_agendado: '10:00',
+      tipo_acondicionamento: 'Paletizado',
+      status_agendamento: 'CONCLUIDO',
+      qtd_chapas_prevista: 2,
+      cargas: {
+        create: {
+          peso_total: 5000,
+          tipo_acondicionamento: 'Paletizado',
+          destinos: { create: { id_armazem: armazem2.id_armazem } }
+        }
+      },
+      recebimentos: {
+        create: {
+          hora_chegada: new Date('2026-09-15T09:30:00-03:00'),
+          hora_entrada: new Date('2026-09-15T10:00:00-03:00'), // Entrou normal, sem espera
+          hora_saida: new Date('2026-09-15T11:00:00-03:00'),
+          status_recebimento: 'CONCLUIDO',
+          descargas: {
+            create: {
+              id_armazem: armazem2.id_armazem,
+              quantidade_movimentada: 5000,
+              qtd_chapas_utilizados: 2
+            }
+          }
+        }
+      }
+    }
+  });
+
+  await prisma.boletimDiario.create({
+    data: {
+      id_armazem: armazem2.id_armazem,
+      data: setembro,
+      responsavel_id: analista.id_usuario,
+      diarias_equivalentes_total: 2.0, // 2 chapas (2 * 90,17 = 180,34)
+      valor_produzido_total: 50.00, // Produção muito baixa -> Ociosidade / Sobra
+      complemento_diaria_pago: 130.34, // Paga complemento -> Gera sobra
+      itens: {
+        create: {
+          tipo_servico: 'PALETIZADO',
+          qtd_descarga: 5000,
+          quantidade: 5000,
+          preco_unitario: 0.01,
+          valor_producao: 50.00
+        }
+      },
+      equipes: {
+        create: [
+          { matricula_chapa: chapa1.matricula_chapa, tipo_jornada: 'COMPLETA' },
+          { matricula_chapa: chapa5.matricula_chapa, tipo_jornada: 'COMPLETA' }
+        ]
+      }
+    }
+  });
+
   console.log('Seed concluído com sucesso!');
 }
 
