@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { LogOut } from 'lucide-react';
+import { LogOut, ChevronDown } from 'lucide-react';
 import './UserMenu.css';
 
 function getInitials(nome: string): string {
@@ -27,6 +27,7 @@ export function UserMenu({ nome, role, onLogout }: UserMenuProps) {
             <span className="user-name">{nome}</span>
             <span className="user-role">{role}</span>
           </div>
+          <ChevronDown className="user-menu-arrow" size={16} />
         </button>
       </DropdownMenu.Trigger>
 

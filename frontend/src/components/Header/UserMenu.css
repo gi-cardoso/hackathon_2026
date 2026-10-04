@@ -90,6 +90,17 @@
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.user-menu-arrow {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .user-info {
+    display: none;
+  }
+}
 .user-role {
   color: #64748b; /* cinza */
   font-size: 12px;
