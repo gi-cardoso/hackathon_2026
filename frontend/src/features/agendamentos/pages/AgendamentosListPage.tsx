@@ -18,26 +18,54 @@ interface AgendamentoItem {
   fornecedor?: { nome_fornecedor?: string; cnpj?: string | null };
 }
 
+type StatusAgendamento = 'PENDENTE' | 'APROVADO' | 'REJEITADO';
+
+const statusOptions: Array<{ value: StatusAgendamento; label: string }> = [
+  { value: 'PENDENTE', label: 'Pendentes' },
+  { value: 'APROVADO', label: 'Aprovados' },
+  { value: 'REJEITADO', label: 'Rejeitados' },
+];
+
 export function AgendamentosListPage() {
   const [items, setItems] = useState<AgendamentoItem[]>([]);
-  const [status, setStatus] = useState('TODOS');
+  const [status, setStatus] = useState<'TODOS' | StatusAgendamento>('TODOS');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let active = true;
+    setItems([]);
+    setError('');
+    setLoading(true);
+
     api.get<AgendamentoItem[]>('/agendamentos/analise/compras')
-      .then((response) => setItems(response.data))
-      .catch(() => setError('Não foi possível carregar os agendamentos de Compras.'))
-      .finally(() => setLoading(false));
+      .then((response) => {
+        if (active) setItems(Array.isArray(response.data) ? response.data : []);
+      })
+      .catch(() => {
+        if (active) setError('Não foi possível carregar os agendamentos de Compras.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
-  const filteredItems = useMemo(() => status === 'TODOS' ? items : items.filter((item) => item.status_agendamento === status), [items, status]);
+  const filteredItems = useMemo(
+    () => status === 'TODOS'
+      ? items
+      : items.filter((item) => item.status_agendamento === status),
+    [items, status],
+  );
 
   return (
     <>
       <Breadcrumb items={[{ label: 'Início', path: '/agendamentos' }, { label: 'Agendamentos' }, { label: 'Lista de agendamentos' }]} />
       <PageContent>
-        <div className="page-heading-row"><div><span className="page-eyebrow">Compras / operação</span><h2>Agendamentos para análise</h2><p className="agendamentos-intro">Pedidos pendentes enviados pelos fornecedores.</p></div><label className="filter-control">Status<select value={status} onChange={(event) => setStatus(event.target.value)}><option value="TODOS">Todos</option><option value="PENDENTE">Pendentes</option><option value="APROVADO">Aprovados</option><option value="REJEITADO">Rejeitados</option></select></label></div>
+        <div className="page-heading-row"><div><span className="page-eyebrow">Compras / operação</span><h2>Agendamentos para análise</h2><p className="agendamentos-intro">Pedidos pendentes enviados pelos fornecedores.</p></div><label className="filter-control">Status<select value={status} onChange={(event) => setStatus(event.target.value as 'TODOS' | StatusAgendamento)}><option value="TODOS">Todos</option>{statusOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label></div>
         {error && <div className="internal-alert" role="alert">{error}</div>}
         {loading && <div className="internal-card-list"><Card><Skeleton className="skeleton-line" /><Skeleton className="skeleton-line short" /></Card><Card><Skeleton className="skeleton-line" /><Skeleton className="skeleton-line short" /></Card></div>}
         {!loading && !error && filteredItems.length === 0 && <EmptyState title="Nenhum agendamento encontrado" description="Quando houver pedidos pendentes, eles aparecerão aqui para análise." />}
