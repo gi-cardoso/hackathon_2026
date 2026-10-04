@@ -77,7 +77,6 @@ export default function Login() {
         <div className="login-card">
           <div className="login-header">
             <div className="login-brand"><Logo variant="full" height="clamp(34px, 5vw, 48px)" /></div>
-            <div className="login-subtitle">Portal Interno</div>
           </div>
 
           {errorMsg && <div className="alert alert-error">{errorMsg}</div>}
