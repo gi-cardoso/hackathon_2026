@@ -1,6 +1,7 @@
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '../Logo';
+import { UserMenu } from './UserMenu';
 import './Header.css';
 
 export function Header() {
@@ -16,7 +17,7 @@ export function Header() {
     <header className="app-header">
       <div className="header-title"><Logo variant="symbol" height="32px" /></div>
       <div className="header-user">
-        <span>Olá, {user?.nome || 'Usuário'}</span>
+        <UserMenu nome={user?.nome || 'Usuário'} role={user?.role || 'Visitante'} />
         <button onClick={handleLogout} className="btn-logout">Sair</button>
       </div>
     </header>
