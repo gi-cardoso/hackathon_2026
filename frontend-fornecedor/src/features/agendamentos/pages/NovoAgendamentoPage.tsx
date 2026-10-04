@@ -7,6 +7,9 @@ import { Card } from '../../../components/ui/Card';
 import { Stepper } from '../../../components/ui/Stepper';
 import { createAgendamento, getApiError, getAvailability, uploadInvoice } from '../../../services/api';
 import type { AvailabilitySlot, InvoiceData } from '../../../services/api';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { isWeekend } from 'date-fns';
 import '../../../components/ui/ui.css';
 import '../styles.css';
 
@@ -19,10 +22,7 @@ const acondicionamentos: Array<{ value: Acondicionamento; title: string; descrip
   { value: 'BIG_BAG', title: 'Big Bag', description: 'Até dois caminhões no horário.' },
 ];
 
-function getToday() {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-}
+
 
 export function NovoAgendamentoPage() {
   const queryClient = useQueryClient();
@@ -92,7 +92,7 @@ export function NovoAgendamentoPage() {
   };
 
   if (step === 5) {
-    return <section className="fornecedor-agendamentos-page fornecedor-confirmation"><span className="fornecedor-eyebrow">Agendamento criado</span><h2>Seu caminhão está na fila certa.</h2><p>O pedido foi enviado para análise da COCAPEC. Você poderá acompanhar a evolução pelo portal.</p><div className="fornecedor-confirmation-actions"><Link className="fornecedor-button" to="/agendamentos">Ver meus agendamentos</Link><Link className="fornecedor-button fornecedor-button-secondary" to="/dashboard">Voltar ao início</Link></div></section>;
+    return <section className="fornecedor-agendamentos-page fornecedor-confirmation"><span className="fornecedor-eyebrow">Agendamento criado</span><p>O pedido foi enviado para análise da COCAPEC. Você poderá acompanhar a evolução pelo portal.</p><div className="fornecedor-confirmation-actions"><Link className="fornecedor-button" to="/agendamentos">Ver meus agendamentos</Link><Link className="fornecedor-button fornecedor-button-secondary" to="/dashboard">Voltar ao início</Link></div></section>;
   }
 
   return (
@@ -108,7 +108,7 @@ export function NovoAgendamentoPage() {
 
       {step === 2 && <Card className="fornecedor-wizard-card"><h3>2. Como a carga chega?</h3><div className="fornecedor-choice-grid">{acondicionamentos.map((option) => <button key={option.value} className={`fornecedor-choice ${acondicionamento === option.value ? 'is-selected' : ''}`} type="button" onClick={() => { setAcondicionamento(option.value); setSlots([]); setStep(3); }}><strong>{option.title}</strong><span>{option.description}</span></button>)}</div><Button type="button" variant="ghost" onClick={() => setStep(1)}>Voltar</Button></Card>}
 
-      {step === 3 && <Card className="fornecedor-wizard-card"><h3>3. Escolha data e horário</h3><div className="fornecedor-form-group"><label htmlFor="data">Data da entrega</label><input id="data" type="date" min={getToday()} value={data} onChange={(event) => { setData(event.target.value); setHorario(''); setSlots([]); }} /></div><div className="fornecedor-slot-grid" aria-live="polite">{loadingSlots ? <p>Consultando disponibilidade...</p> : slots.map((slot) => <button key={slot.horario} type="button" disabled={!slot.disponivel} className={`fornecedor-slot ${slot.disponivel ? 'is-available' : 'is-occupied'} ${horario === slot.horario ? 'is-selected' : ''}`} onClick={() => setHorario(slot.horario)}><strong>{slot.horario}</strong><span>{slot.disponivel ? `${slot.vagas_restantes} vaga(s)` : 'Ocupado'}</span></button>)}</div><div className="fornecedor-wizard-actions"><Button type="button" variant="ghost" onClick={() => setStep(2)}>Voltar</Button><Button type="button" disabled={!data || !horario} onClick={() => setStep(4)}>Continuar</Button></div></Card>}
+      {step === 3 && <Card className="fornecedor-wizard-card"><h3>3. Escolha data e horário</h3><div className="fornecedor-form-group"><label htmlFor="data">Data da entrega</label><DatePicker selected={data ? new Date(`${data}T00:00:00`) : null} onChange={(d: Date | null) => { if (d) { setData(d.toISOString().split('T')[0]); setHorario(''); setSlots([]); } }} minDate={new Date()} filterDate={(d: Date) => !isWeekend(d)} dateFormat="dd/MM/yyyy" placeholderText="Selecione uma data" className="ui-input" /></div><div className="fornecedor-slot-grid" aria-live="polite">{loadingSlots ? <p>Consultando disponibilidade...</p> : slots.map((slot) => <button key={slot.horario} type="button" disabled={!slot.disponivel} className={`fornecedor-slot ${slot.disponivel ? 'is-available' : 'is-occupied'} ${horario === slot.horario ? 'is-selected' : ''}`} onClick={() => setHorario(slot.horario)}><strong>{slot.horario}</strong><span>{slot.disponivel ? `${slot.vagas_restantes} vaga(s)` : 'Ocupado'}</span></button>)}</div><div className="fornecedor-wizard-actions"><Button type="button" variant="ghost" onClick={() => setStep(2)}>Voltar</Button><Button type="button" disabled={!data || !horario} onClick={() => setStep(4)}>Continuar</Button></div></Card>}
 
       {step === 4 && <Card className="fornecedor-wizard-card"><h3>4. Revise antes de confirmar</h3><dl className="fornecedor-agendamento-summary"><div><dt>Nota fiscal</dt><dd>{file?.name}</dd></div><div><dt>Operação</dt><dd>{invoice?.identificacao?.naturezaOperacao || 'Recebimento'}</dd></div><div><dt>Acondicionamento</dt><dd>{acondicionamentos.find((item) => item.value === acondicionamento)?.title}</dd></div><div><dt>Data e horário</dt><dd>{data} às {horario}</dd></div></dl><div className="fornecedor-wizard-actions"><Button type="button" variant="ghost" onClick={() => setStep(3)}>Editar</Button><Button type="button" loading={loading} onClick={() => void handleSubmit()}>Confirmar agendamento</Button></div></Card>}
     </section>

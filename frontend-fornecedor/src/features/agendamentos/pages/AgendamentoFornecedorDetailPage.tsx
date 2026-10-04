@@ -8,12 +8,12 @@ import { getApiError, cancelarAgendamento, reagendarAgendamento, getAvailability
 import type { AvailabilitySlot } from '../../../services/api';
 import { useAgendamentos } from '../../../hooks/useAgendamentos';
 import { Button } from '../../../components/ui/Button';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { isWeekend } from 'date-fns';
 import '../styles.css';
 
-function getToday() {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-}
+
 
 export function AgendamentoFornecedorDetailPage() {
   const { id } = useParams();
@@ -140,7 +140,7 @@ export function AgendamentoFornecedorDetailPage() {
               <div className="fornecedor-agendamento-form" style={{ marginTop: '24px' }}>
                 <div className="fornecedor-form-group">
                   <label htmlFor="novaData">Nova data da entrega</label>
-                  <input id="novaData" type="date" min={getToday()} value={novaData} onChange={(event) => { setNovaData(event.target.value); setNovoHorario(''); setSlots([]); }} />
+                  <DatePicker selected={novaData ? new Date(`${novaData}T00:00:00`) : null} onChange={(d: Date | null) => { if (d) { setNovaData(d.toISOString().split('T')[0]); setNovoHorario(''); setSlots([]); } }} minDate={new Date()} filterDate={(d: Date) => !isWeekend(d)} dateFormat="dd/MM/yyyy" placeholderText="Selecione uma data" className="ui-input" />
                 </div>
                 
                 {novaData && (
