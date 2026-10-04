@@ -43,8 +43,8 @@
 .detail-grid h3 { margin-bottom: var(--space-3); }
 .detail-list { display: grid; gap: var(--space-2); margin: 0; }
 .detail-list div { border-top: 1px solid var(--line); display: flex; gap: var(--space-2); justify-content: space-between; padding-top: var(--space-2); }
-.detail-list dt, .agenda-muted { color: var(--muted); }
-.detail-list dd { font-weight: 700; margin: 0; text-align: right; }
+.detail-list dt, .agenda-muted { color: var(--muted); flex-shrink: 0; }
+.detail-list dd { font-weight: 700; margin: 0; text-align: right; word-break: break-word; overflow-wrap: anywhere; min-width: 0; max-width: 100%; }
 .detail-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .invoice-description, .invoice-unavailable { color: var(--muted); }
 .invoice-key { color: var(--muted); font-size: 0.8rem; overflow-wrap: anywhere; }
