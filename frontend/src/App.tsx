@@ -56,6 +56,7 @@ const modules = [
     pages: [
       { slug: 'estoque', label: 'Estoque', title: 'Estoque' },
       { slug: 'movimentacoes', label: 'Movimentações', title: 'Movimentações' },
+      { slug: 'recebimentos', label: 'Recebimentos', title: 'Recebimentos' },
     ],
   },
   {
@@ -146,25 +147,7 @@ function App() {
             <Route path="agenda-operacional" element={<AgendaOperacionalPage />} />
             <Route path=":id" element={<AgendamentoDetailPage />} />
           </Route>
-          <Route
-            path="/recebimentos"
-            element={
-              <PrivateRoute>
-                <RoleRoute roles={['ARMAZEM', 'ADMIN']}>
-                <AppLayout>
-                  <ModuleLayout
-                    title="Recebimentos"
-                    description="Registro das operações realizadas no armazém."
-                    menuItems={[{ label: 'Registrar recebimento', path: '/recebimentos' }]}
-                  />
-                </AppLayout>
-                </RoleRoute>
-              </PrivateRoute>
-            }
-          >
-            <Route index element={<RegistrarRecebimentoPage />} />
-            <Route path=":id" element={<RecebimentoDetailPage />} />
-          </Route>
+
           {modules.map((module) => {
             const menuItems: ModuleMenuItem[] = module.pages.map((page) => ({
               label: page.label,
@@ -200,10 +183,13 @@ function App() {
                         ? <FornecedoresPage />
                       : module.path === 'boletim' && page.slug === 'publicacoes'
                         ? <BoletinsPage />
+                      : module.path === 'armazem' && page.slug === 'recebimentos'
+                        ? <RegistrarRecebimentoPage />
                       : <ModuleStatusPage modulePath={module.path} moduleTitle={module.title} title={page.title} />}
                   />
                 ))}
                 {module.path === 'boletim' && <Route path="publicacoes/:id" element={<BoletinsPage />} />}
+                {module.path === 'armazem' && <Route path="recebimentos/:id" element={<RecebimentoDetailPage />} />}
               </Route>
             );
           })}

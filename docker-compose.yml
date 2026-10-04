@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-hackathon_db}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -16,22 +16,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  # Opcional: Se desejar rodar a aplicacao Express inteira dentro de um container Docker
-  # api:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: express_api
-  #   restart: unless-stopped
-  #   ports:
-  #     - "${PORT:-3000}:3000"
-  #   environment:
-  #     - PORT=3000
-  #     - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-hackathon_db}?schema=public
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
 
 volumes:
   postgres_data:

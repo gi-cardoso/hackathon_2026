@@ -127,7 +127,7 @@ export function RegistrarRecebimentoPage() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Início', path: '/armazem' }, { label: 'Armazém' }, { label: 'Recebimentos' }]} />
+      <Breadcrumb items={[{ label: 'Armazém', path: '/armazem' }, { label: 'Recebimentos' }]} />
       <PageContent>
         <div className="recebimento-heading">
           <div>
@@ -142,7 +142,7 @@ export function RegistrarRecebimentoPage() {
           <h3>Recebimento #{created.id_recebimento}</h3>
           <p>O recebimento foi persistido com status {created.status_recebimento}.</p>
           <div className="recebimento-actions">
-            <Link className="ui-button ui-button-secondary" to={`/recebimentos/${created.id_recebimento}`}>Ver detalhes</Link>
+            <Link className="ui-button ui-button-secondary" to={`/armazem/recebimentos/${created.id_recebimento}`}>Ver detalhes</Link>
             <Button type="button" variant="ghost" onClick={reset}>Registrar outro</Button>
           </div>
         </Card> : <Card>
@@ -216,9 +216,9 @@ export function RecebimentoDetailPage() {
 
   return (
     <>
-      <Breadcrumb items={[{ label: 'Início', path: '/armazem' }, { label: 'Armazém' }, { label: 'Recebimento' }]} />
+      <Breadcrumb items={[{ label: 'Armazém', path: '/armazem' }, { label: 'Recebimentos', path: '/armazem/recebimentos' }, { label: 'Detalhes' }]} />
       <PageContent>
-        <div className="recebimento-heading"><div><span className="page-eyebrow">Operação de armazém</span><h2>Detalhes do recebimento</h2><p>Consulta do recebimento #{id || 'selecionado'} no sistema.</p></div><Link className="ui-button ui-button-ghost" to="/recebimentos">Novo recebimento</Link></div>
+        <div className="recebimento-heading"><div><span className="page-eyebrow">Operação de armazém</span><h2>Detalhes do recebimento</h2><p>Consulta do recebimento #{id || 'selecionado'} no sistema.</p></div><Link className="ui-button ui-button-ghost" to="/armazem/recebimentos">Novo recebimento</Link></div>
         {loading && <Card><p>Carregando dados do recebimento...</p></Card>}
         {error && <div className="internal-alert" role="alert">{error}</div>}
         {!loading && !error && recebimento && <div className="recebimento-detail-grid">

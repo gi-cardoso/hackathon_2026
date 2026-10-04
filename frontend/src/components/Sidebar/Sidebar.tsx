@@ -8,7 +8,6 @@ export function Sidebar() {
   const items = [
     { path: '/compras', label: 'Compras', roles: ['COMPRAS', 'ADMIN'] },
     { path: '/agendamentos', label: 'Agendamentos', roles: ['COMPRAS', 'ARMAZEM', 'PORTARIA', 'ADMIN'] },
-    { path: '/recebimentos', label: 'Recebimentos', roles: ['ARMAZEM', 'ADMIN'] },
     { path: '/armazem', label: 'Armazém', roles: ['ARMAZEM', 'PORTARIA', 'ADMIN'] },
     { path: '/boletim', label: 'Boletim', roles: ['BOLETIM', 'ADMIN'] },
     { path: '/bi', label: 'BI', roles: ['BI', 'GESTOR', 'ADMIN'] },
