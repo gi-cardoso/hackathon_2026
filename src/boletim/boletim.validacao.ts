@@ -14,7 +14,6 @@ interface MembroEquipe {
 }
 
 interface DadosBoletim {
-  idArmazem: number;
   data: string;
   responsavelId?: number;
   producao: ItemProducao[];
@@ -22,10 +21,6 @@ interface DadosBoletim {
 }
 
 export function validarBoletim(dados: DadosBoletim) {
-  if (!Number.isInteger(dados.idArmazem) || dados.idArmazem <= 0) {
-    throw new Error("O armazém informado é inválido.");
-  }
-
   if (!dados.data) {
     throw new Error("A data do boletim é obrigatória.");
   }
@@ -37,15 +32,21 @@ export function validarBoletim(dados: DadosBoletim) {
   }
 
   if (!Array.isArray(dados.producao) || dados.producao.length === 0) {
-    throw new Error("O boletim precisa possuir pelo menos um item de produção.");
+    throw new Error(
+      "O boletim precisa possuir pelo menos um item de produção."
+    );
   }
 
   if (!Array.isArray(dados.equipe) || dados.equipe.length === 0) {
-    throw new Error("O boletim precisa possuir pelo menos um chapa.");
+    throw new Error(
+      "O boletim precisa possuir pelo menos um chapa."
+    );
   }
 
   if (dados.equipe.length > 20) {
-    throw new Error("O boletim não pode possuir mais de 20 chapas.");
+    throw new Error(
+      "O boletim não pode possuir mais de 20 chapas."
+    );
   }
 
   for (const item of dados.producao) {
@@ -91,7 +92,9 @@ export function validarBoletim(dados: DadosBoletim) {
       !membro.matricula ||
       typeof membro.matricula !== "string"
     ) {
-      throw new Error("A matrícula do chapa é obrigatória.");
+      throw new Error(
+        "A matrícula do chapa é obrigatória."
+      );
     }
 
     if (
@@ -117,7 +120,9 @@ export function validarBoletim(dados: DadosBoletim) {
     (!Number.isInteger(dados.responsavelId) ||
       dados.responsavelId <= 0)
   ) {
-    throw new Error("O responsável informado é inválido.");
+    throw new Error(
+      "O responsável informado é inválido."
+    );
   }
 
   return {

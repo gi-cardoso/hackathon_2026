@@ -5,17 +5,22 @@ import { validarBoletim } from "./boletim.validacao";
 
 export const boletimRouter = Router();
 
+const ID_ARMAZEM_GERAL = 5;
+
 boletimRouter.post("/", async (req, res) => {
   try {
-    const dadosValidados = validarBoletim(req.body);
+    const dadosValidados = validarBoletim({
+      ...req.body,
+      idArmazem: ID_ARMAZEM_GERAL,
+    });
 
-const resultado = await criarBoletim({
-  idArmazem: dadosValidados.idArmazem,
-  data: dadosValidados.dataConvertida,
-  responsavelId: dadosValidados.responsavelId,
-  producao: dadosValidados.producao,
-  equipe: dadosValidados.equipe,
-});
+    const resultado = await criarBoletim({
+      idArmazem: ID_ARMAZEM_GERAL,
+      data: dadosValidados.dataConvertida,
+      responsavelId: dadosValidados.responsavelId,
+      producao: dadosValidados.producao,
+      equipe: dadosValidados.equipe,
+    });
 
     return res.status(201).json({
       mensagem: "Boletim criado com sucesso.",
@@ -38,6 +43,9 @@ const resultado = await criarBoletim({
 boletimRouter.get("/", async (req, res) => {
   try {
     const boletins = await prisma.boletimDiario.findMany({
+      where: {
+        id_armazem: ID_ARMAZEM_GERAL,
+      },
       include: {
         armazem: true,
         itens: true,
@@ -60,9 +68,16 @@ boletimRouter.get("/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
 
-    const boletim = await prisma.boletimDiario.findUnique({
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({
+        erro: "ID do boletim inválido.",
+      });
+    }
+
+    const boletim = await prisma.boletimDiario.findFirst({
       where: {
         id_boletim: id,
+        id_armazem: ID_ARMAZEM_GERAL,
       },
       include: {
         armazem: true,
