@@ -32,6 +32,8 @@ export interface AgendamentoFornecedor {
   status_agendamento: string;
   id_nota?: number | null;
   peso_total: number;
+  motivo_cancelamento?: string | null;
+  motivo_reagendamento?: string | null;
   cargas: Array<{ peso_total: number }>;
 }
 
@@ -73,6 +75,16 @@ export async function createAgendamento(payload: {
   peso_total: number;
 }) {
   const response = await api.post<AgendamentoFornecedor>('/agendamentos', payload);
+  return response.data;
+}
+
+export async function cancelarAgendamento(id: number, motivo?: string) {
+  const response = await api.patch<{ mensagem: string; agendamento: AgendamentoFornecedor }>(`/agendamentos/${id}/cancelar`, { motivo });
+  return response.data;
+}
+
+export async function reagendarAgendamento(id: number, payload: { nova_data: string; novo_horario: string; motivo?: string }) {
+  const response = await api.patch<{ mensagem: string; agendamento: AgendamentoFornecedor }>(`/agendamentos/${id}/reagendar`, payload);
   return response.data;
 }
 

@@ -12,6 +12,8 @@ export const agendamentoFornecedorSchema = z.object({
   tipo_acondicionamento: z.string(),
   status_agendamento: z.string(),
   id_nota: z.number().nullable().optional(),
+  motivo_cancelamento: z.string().nullable().optional(),
+  motivo_reagendamento: z.string().nullable().optional(),
   cargas: z.array(z.object({ peso_total: decimalSchema }).passthrough()),
 });
 
