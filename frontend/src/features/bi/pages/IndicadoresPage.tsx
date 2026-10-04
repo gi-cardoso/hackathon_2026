@@ -7,6 +7,7 @@ import { Card } from '../../../components/ui/Card';
 import { Button } from '../../../components/ui/Button';
 import { getApiError, getDashboardOperacao } from '../../../services/api';
 import type { DashboardOperacaoResponse } from '../../../services/api';
+import { InfoHint } from '../../../components/InfoHint';
 import './styles.css';
 
 function formatDecimal(value: number) {
@@ -321,74 +322,114 @@ export function IndicadoresPage() {
             <div className="dashboard-row">
               <div className="dashboard-col">
                 <Card>
-                  <h4 style={{marginBottom: '1rem', color: 'var(--color-text-muted)'}}>Variáveis de Ociosidade (Sobra de Chapa)</h4>
+                  <h4 style={{marginBottom: '1rem', color: 'var(--color-text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px'}}>
+                    Variáveis de Ociosidade (Sobra de Chapa)
+                    <InfoHint label="Mais informações sobre Variáveis de Ociosidade">
+                      * Se a Produção for menor que a Garantia Mínima, a cooperativa paga a diferença (Complemento/Prejuízo). O sistema então calcula exatamente quantos chapas sobraram baseado nesse valor pago a mais.
+                    </InfoHint>
+                  </h4>
                   <dl className="detail-list">
                     <div>
-                      <dt>Produção Total Alcançada (R$)</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Produção Total Alcançada (R$)
+                        <InfoHint label="Mais informações sobre Produção Total Alcançada">
+                          Conta: Soma das taxas de carga/descarga no Boletim
+                        </InfoHint>
+                      </dt>
                       <dd>R$ {formatDecimal(dashboard.analise_chapas?.producao_total || 0)}</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Soma das taxas de carga/descarga no Boletim</span>
                     </div>
                     <div>
-                      <dt>Garantia Mínima da Equipe (R$)</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Garantia Mínima da Equipe (R$)
+                        <InfoHint label="Mais informações sobre Garantia Mínima">
+                          Conta: Diárias Equivalentes × R$ 90,17 (Piso)
+                        </InfoHint>
+                      </dt>
                       <dd>R$ {formatDecimal(dashboard.analise_chapas?.garantia_minima || 0)}</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Diárias Equivalentes × R$ 90,17 (Piso)</span>
                     </div>
                     <div>
-                      <dt>Sobra Financeira / Prejuízo (R$)</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Sobra Financeira / Prejuízo (R$)
+                        <InfoHint label="Mais informações sobre Sobra Financeira">
+                          Conta: Garantia Mínima − Produção Total
+                        </InfoHint>
+                      </dt>
                       <dd>R$ {formatDecimal(dashboard.analise_chapas?.prejuizo_estimado || 0)}</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Garantia Mínima − Produção Total</span>
                     </div>
                     <div>
-                      <dt>Diárias Equivalentes Pagas</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Diárias Equivalentes Pagas
+                        <InfoHint label="Mais informações sobre Diárias Equivalentes Pagas">
+                          Conta: 1 por pessoa, subtraindo 0.5 em saídas antecipadas
+                        </InfoHint>
+                      </dt>
                       <dd>{formatDecimal(dashboard.analise_chapas?.diarias_equivalentes_boletim || 0)} diárias</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: 1 por pessoa, subtraindo 0.5 em saídas antecipadas</span>
                     </div>
                     <div>
-                      <dt>Sobra de Pessoas (Ociosos)</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Sobra de Pessoas (Ociosos)
+                        <InfoHint label="Mais informações sobre Sobra de Pessoas">
+                          Conta: Diárias Pagas − (Produção Total ÷ R$ 90,17)
+                        </InfoHint>
+                      </dt>
                       <dd>{formatDecimal(dashboard.analise_chapas?.sobra_em_pessoas || 0)} pessoas</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Diárias Pagas − (Produção Total ÷ R$ 90,17)</span>
                     </div>
                   </dl>
-                  <p style={{ marginTop: '1rem', fontSize: '13px', color: 'var(--color-text-muted)' }}>
-                    <em>* Se a Produção for menor que a Garantia Mínima, a cooperativa paga a diferença (Complemento/Prejuízo). O sistema então calcula exatamente quantos chapas sobraram baseado nesse valor pago a mais.</em>
-                  </p>
                 </Card>
               </div>
               <div className="dashboard-col">
                 <Card>
-                  <h4 style={{marginBottom: '1rem', color: 'var(--color-text-muted)'}}>Variáveis de Gargalo (Falta de Chapa)</h4>
+                  <h4 style={{marginBottom: '1rem', color: 'var(--color-text-muted)', display: 'inline-flex', alignItems: 'center', gap: '4px'}}>
+                    Variáveis de Gargalo (Falta de Chapa)
+                    <InfoHint label="Mais informações sobre Variáveis de Gargalo">
+                      * Mesmo se a equipe se pagar (Produção &gt; Garantia), o sistema acusa "FALTA DE CHAPA" caso ocorra retenção de caminhões (caminhão entra em um dia e descarrega no outro) ou a espera passe de 2 horas.
+                    </InfoHint>
+                  </h4>
                   <dl className="detail-list">
                     <div>
-                      <dt>Caminhões Retidos (Dia Seguinte)</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Caminhões Retidos (Dia Seguinte)
+                        <InfoHint label="Mais informações sobre Caminhões Retidos">
+                          Conta: Veículos em que Data(Chegada) ≠ Data(Entrada)
+                        </InfoHint>
+                      </dt>
                       <dd>{dashboard.analise_chapas?.cargas_retidas || 0} caminhões</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Veículos em que Data(Chegada) ≠ Data(Entrada)</span>
                     </div>
                     <div>
-                      <dt>Tempo Médio de Espera</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Tempo Médio de Espera
+                        <InfoHint label="Mais informações sobre Tempo Médio de Espera">
+                          Conta: Diferença em minutos entre Chegada e Entrada de todas as cargas
+                        </InfoHint>
+                      </dt>
                       <dd>{formatDecimal(dashboard.tempos_operacionais.tempo_medio_espera_minutos)} min</dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Diferença em minutos entre Chegada e Entrada de todas as cargas</span>
                     </div>
                     <div>
-                      <dt>Status de Tolerância de Gargalo</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Status de Tolerância de Gargalo
+                        <InfoHint label="Mais informações sobre Status de Tolerância">
+                          Conta: Retidos &gt; 0 OU Espera &gt; 120 min
+                        </InfoHint>
+                      </dt>
                       <dd>
                         {dashboard.analise_chapas && (dashboard.analise_chapas.cargas_retidas > 0 || dashboard.tempos_operacionais.tempo_medio_espera_minutos > 120)
                           ? <span style={{ color: '#b45309', fontWeight: 'bold' }}>Ultrapassou o Limite</span>
                           : <span style={{ color: '#047857', fontWeight: 'bold' }}>Dentro da Normalidade</span>
                         }
                       </dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Retidos {'>'} 0 OU Espera {'>'} 120 min</span>
                     </div>
                     <div>
-                      <dt>Status Operacional Final</dt>
+                      <dt style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        Status Operacional Final
+                        <InfoHint label="Mais informações sobre Status Operacional Final">
+                          Conta: Resultado direto da árvore de decisão de Sobra x Falta
+                        </InfoHint>
+                      </dt>
                       <dd style={{ fontWeight: 'bold' }}>
                         {dashboard.analise_chapas?.status_gargalo.replace(/_/g, ' ')}
                       </dd>
-                      <span style={{ display: 'block', fontSize: '12px', color: 'var(--color-text-muted)' }}>Conta: Resultado direto da árvore de decisão de Sobra x Falta</span>
                     </div>
                   </dl>
-                  <p style={{ marginTop: '1rem', fontSize: '13px', color: 'var(--color-text-muted)' }}>
-                    <em>* Mesmo se a equipe se pagar (Produção {'>'} Garantia), o sistema acusa "FALTA DE CHAPA" caso ocorra retenção de caminhões (caminhão entra em um dia e descarrega no outro) ou a espera passe de 2 horas.</em>
-                  </p>
                 </Card>
               </div>
             </div>
