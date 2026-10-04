@@ -316,12 +316,14 @@ export class DashboardService {
     const custosPorArmazem = new Map<number, { diarias_equivalentes: number; custo_estimado: number }>();
     let diariasBoletim = 0;
     let custoBoletim = 0;
+    let complementoBoletim = 0;
     for (const boletim of boletins) {
       const diarias = decimalToNumber(boletim.diarias_equivalentes_total);
       const valorProduzido = decimalToNumber(boletim.valor_produzido_total);
       const complemento = decimalToNumber(boletim.complemento_diaria_pago);
       diariasBoletim += diarias;
       custoBoletim += valorProduzido + complemento;
+      complementoBoletim += complemento;
       if (boletim.id_armazem) {
         const atual = custosPorArmazem.get(boletim.id_armazem) ?? {
           diarias_equivalentes: 0, custo_estimado: 0,
@@ -342,11 +344,43 @@ export class DashboardService {
       .sort(([, a], [, b]) => b.quantidade_recebimentos - a.quantidade_recebimentos)[0];
     const diaPico = [...diasSemana.entries()]
       .sort(([, a], [, b]) => b.quantidade_recebimentos - a.quantidade_recebimentos)[0];
-    const porArmazemResposta = [...porArmazem.values()].map((item) => ({
-      ...item,
-      percentual_do_total: percentage(item.quantidade_cargas, recebimentosConcluidos.length),
-      peso_total_kg: round(item.peso_total_kg),
-    }));
+    const porArmazemResposta = [...porArmazem.values()].map((item) => {
+      const custoInfo = custosPorArmazem.get(item.id_armazem);
+      return {
+        ...item,
+        percentual_do_total: percentage(item.quantidade_cargas, recebimentosConcluidos.length),
+        peso_total_kg: round(item.peso_total_kg),
+        diarias_pagas: custoInfo ? round(custoInfo.diarias_equivalentes, 2) : 0,
+      };
+    });
+
+    // ALGORITMO: Sobra vs Falta de Chapa
+    const PISO_DIARIA = 90.1731;
+    const producaoTotal = custoBoletim - complementoBoletim;
+    const garantiaMinima = diariasBoletim * PISO_DIARIA;
+    let sobraFinanceira = 0;
+    let sobraEmPessoas = 0;
+    let statusGargalo = "IDEAL";
+    let cargasRetidas = 0;
+
+    for (const item of recebimentosConcluidos) {
+      if (dateKey(item.hora_chegada) !== dateKey(item.hora_entrada!)) {
+        cargasRetidas += 1;
+      }
+    }
+
+    const tempoMedioEspera = totalComEspera ? esperaTotal / totalComEspera : 0;
+
+    if (producaoTotal < garantiaMinima) {
+      sobraFinanceira = garantiaMinima - producaoTotal;
+      const diariasIdeais = producaoTotal / PISO_DIARIA;
+      sobraEmPessoas = diariasBoletim - diariasIdeais;
+      statusGargalo = "SOBRA_CHAPA_OCIOSIDADE";
+    } else {
+      if (cargasRetidas > 0 || tempoMedioEspera > 120) {
+        statusGargalo = "FALTA_CHAPA_GARGALO";
+      }
+    }
 
     return {
       periodo: {
@@ -442,6 +476,16 @@ export class DashboardService {
           diarias_equivalentes: round(diariasBoletim, 2),
           observacao: "Valor apurado dos boletins no período; boletins não possuem vínculo direto com recebimentos.",
         },
+      },
+      analise_chapas: {
+        chapas_alocados_estimativa: (inicio.getMonth() >= 9 || inicio.getMonth() <= 2) ? 15 : 8,
+        diarias_equivalentes_boletim: round(diariasBoletim, 2),
+        prejuizo_estimado: round(sobraFinanceira, 4),
+        sobra_em_pessoas: round(sobraEmPessoas, 2),
+        cargas_retidas: cargasRetidas,
+        status_gargalo: statusGargalo,
+        producao_total: round(producaoTotal, 4),
+        garantia_minima: round(garantiaMinima, 4),
       },
       dimensionamento_chapas: {
         chapas_previstos_total: totalChapasPrevistos,

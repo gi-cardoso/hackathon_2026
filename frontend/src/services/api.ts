@@ -279,6 +279,7 @@ export interface DashboardOperacaoResponse {
     quantidade_cargas: number;
     peso_total_kg: number;
     percentual_do_total: number;
+    diarias_pagas: number;
   }>;
   tempos_operacionais: {
     tempo_medio_espera_minutos: number;
@@ -351,6 +352,16 @@ export interface DashboardOperacaoResponse {
       percentual: number;
     }>;
     metodologia_data: string;
+  };
+  analise_chapas: {
+    chapas_alocados_estimativa: number;
+    diarias_equivalentes_boletim: number;
+    prejuizo_estimado: number;
+    sobra_em_pessoas: number;
+    cargas_retidas: number;
+    status_gargalo: string;
+    producao_total: number;
+    garantia_minima: number;
   };
 }
 
