@@ -398,6 +398,11 @@ export async function createUser(payload: CreateUserPayload) {
   return response.data;
 }
 
+export async function updateUser(id: number, payload: Partial<CreateUserPayload>) {
+  const response = await api.put<UserResponse>(`/users/${id}`, payload);
+  return response.data;
+}
+
 export async function deleteUser(id: number) {
   await api.delete(`/users/${id}`);
 }

@@ -5,7 +5,7 @@ import { PageContent } from '../../../components/layout/PageContent';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { Input } from '../../../components/ui/Input';
-import { getApiError, getUsers, createUser, deleteUser } from '../../../services/api';
+import { getApiError, getUsers, createUser, updateUser } from '../../../services/api';
 import type { UserResponse, CreateUserPayload } from '../../../services/api';
 import './styles.css';
 
@@ -23,6 +23,7 @@ export function UsersPage() {
   const [error, setError] = useState('');
   
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [formData, setFormData] = useState<CreateUserPayload>({
     nome: '',
     email: '',
@@ -52,16 +53,26 @@ export function UsersPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.nome || !formData.email || !formData.matricula || !formData.senha || !formData.role) {
+    if (!formData.nome || !formData.email || !formData.matricula || !formData.role) {
       toast.error('Preencha todos os campos obrigatórios.');
+      return;
+    }
+    if (!editingId && !formData.senha) {
+      toast.error('Senha é obrigatória para novos usuários.');
       return;
     }
 
     setSubmitting(true);
     try {
-      await createUser(formData);
-      toast.success('Usuário criado com sucesso!');
+      if (editingId) {
+        await updateUser(editingId, formData);
+        toast.success('Usuário atualizado com sucesso!');
+      } else {
+        await createUser(formData);
+        toast.success('Usuário criado com sucesso!');
+      }
       setShowForm(false);
+      setEditingId(null);
       setFormData({ nome: '', email: '', matricula: '', senha: '', role: '', ativo: true });
       fetchUsers();
     } catch (err: unknown) {
@@ -71,17 +82,27 @@ export function UsersPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Tem certeza que deseja remover este usuário?')) {
-      return;
-    }
+  const handleToggleStatus = async (user: UserResponse) => {
     try {
-      await deleteUser(id);
-      toast.success('Usuário removido com sucesso.');
-      setUsers((current) => current.filter((u) => u.id_usuario !== id));
+      await updateUser(user.id_usuario, { ativo: !user.ativo });
+      toast.success(`Usuário ${user.ativo ? 'desativado' : 'ativado'} com sucesso.`);
+      setUsers((current) => current.map((u) => u.id_usuario === user.id_usuario ? { ...u, ativo: !user.ativo } : u));
     } catch (err: unknown) {
       toast.error(getApiError(err));
     }
+  };
+
+  const handleEdit = (user: UserResponse) => {
+    setEditingId(user.id_usuario);
+    setFormData({
+      nome: user.nome,
+      email: user.email,
+      matricula: user.matricula,
+      senha: '',
+      role: user.role,
+      ativo: user.ativo,
+    });
+    setShowForm(true);
   };
 
   return (
@@ -100,14 +121,20 @@ export function UsersPage() {
             <h2>Lista de usuários</h2>
             <p>Gerencie os usuários do sistema e seus perfis de acesso.</p>
           </div>
-          <Button onClick={() => setShowForm(!showForm)}>
+          <Button onClick={() => {
+            setShowForm(!showForm);
+            if (showForm) {
+              setEditingId(null);
+              setFormData({ nome: '', email: '', matricula: '', senha: '', role: '', ativo: true });
+            }
+          }}>
             {showForm ? 'Cancelar' : 'Adicionar usuário'}
           </Button>
         </div>
 
         {showForm && (
           <Card className="user-form-card">
-            <h3>Novo usuário</h3>
+            <h3>{editingId ? 'Editar usuário' : 'Novo usuário'}</h3>
             <form onSubmit={handleSubmit} className="user-form">
               <div className="user-form-grid">
                 <label>
@@ -136,12 +163,12 @@ export function UsersPage() {
                   />
                 </label>
                 <label>
-                  Senha
+                  Senha {editingId && <small>(opcional)</small>}
                   <Input 
                     type="password"
                     value={formData.senha}
                     onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                    required
+                    required={!editingId}
                   />
                 </label>
                 <label>
@@ -208,8 +235,13 @@ export function UsersPage() {
                         {user.ativo ? 'Ativo' : 'Inativo'}
                       </span>
                     </td>
-                    <td>
-                      <Button variant="danger" onClick={() => handleDelete(user.id_usuario)}>Remover</Button>
+                    <td style={{ display: 'flex', gap: '0.5rem' }}>
+                      <Button variant="ghost" onClick={() => handleEdit(user)} title="Editar">
+                        <span aria-hidden="true">✎</span>
+                      </Button>
+                      <Button variant="danger" onClick={() => handleToggleStatus(user)}>
+                        {user.ativo ? 'Desativar' : 'Ativar'}
+                      </Button>
                     </td>
                   </tr>
                 ))}
