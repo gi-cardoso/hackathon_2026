@@ -59,6 +59,8 @@ model Agendamento {
   status_agendamento      String
   qtd_chapas_prevista     Int?
   regra_chapas_aplicada   String?
+  motivo_cancelamento      String?
+  motivo_reagendamento     String?
 
   fornecedor              Fornecedor?     @relation(fields: [id_fornecedor], references: [id_fornecedor])
   nota_fiscal             NotaFiscal?     @relation(fields: [id_nota], references: [id_nota])
