@@ -13,9 +13,7 @@ const ROLES = [
   'ADMIN',
   'COMPRAS',
   'ARMAZEM',
-  'PORTARIA',
   'BOLETIM',
-  'BI',
   'GESTOR'
 ];
 

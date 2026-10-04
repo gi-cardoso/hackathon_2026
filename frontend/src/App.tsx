@@ -54,7 +54,7 @@ const modules = [
     path: 'armazem',
     title: 'Armazém',
     description: 'Portaria, estoque e movimentação de cargas.',
-    roles: ['ARMAZEM', 'PORTARIA', 'ADMIN'],
+    roles: ['ARMAZEM', 'ADMIN'],
     pages: [
       { slug: 'recebimentos', label: 'Recebimentos', title: 'Recebimentos' },
     ],
@@ -72,7 +72,7 @@ const modules = [
     path: 'bi',
     title: 'BI',
     description: 'Indicadores para decisão operacional.',
-    roles: ['BI', 'GESTOR', 'ADMIN'],
+    roles: ['GESTOR', 'ADMIN'],
     pages: [
       { slug: 'indicadores', label: 'Indicadores', title: 'Indicadores' },
     ],
@@ -123,7 +123,7 @@ function App() {
             path="/agendamentos"
             element={
               <PrivateRoute>
-                <RoleRoute roles={['COMPRAS', 'ARMAZEM', 'PORTARIA', 'ADMIN']}>
+                <RoleRoute roles={['COMPRAS', 'ARMAZEM', 'ADMIN']}>
                 <AppLayout>
                   <ModuleLayout
                     title="Agendamentos"

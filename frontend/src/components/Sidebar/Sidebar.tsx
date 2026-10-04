@@ -7,10 +7,10 @@ export function Sidebar() {
   const { user } = useAuth();
   const items = [
     { path: '/compras', label: 'Compras', roles: ['COMPRAS', 'ADMIN'] },
-    { path: '/agendamentos', label: 'Agendamentos', roles: ['COMPRAS', 'ARMAZEM', 'PORTARIA', 'ADMIN'] },
-    { path: '/armazem', label: 'Armazém', roles: ['ARMAZEM', 'PORTARIA', 'ADMIN'] },
+    { path: '/agendamentos', label: 'Agendamentos', roles: ['COMPRAS', 'ARMAZEM', 'ADMIN'] },
+    { path: '/armazem', label: 'Armazém', roles: ['ARMAZEM', 'ADMIN'] },
     { path: '/boletim', label: 'Boletim', roles: ['BOLETIM', 'ADMIN'] },
-    { path: '/bi', label: 'BI', roles: ['BI', 'GESTOR', 'ADMIN'] },
+    { path: '/bi', label: 'BI', roles: ['GESTOR', 'ADMIN'] },
     { path: '/usuarios', label: 'Usuários', roles: ['ADMIN'] },
     { path: '/configuracoes', label: 'Configurações', roles: ['ADMIN'] },
   ];
