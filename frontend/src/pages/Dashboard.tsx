@@ -20,7 +20,7 @@ export default function Dashboard() {
       />
       
       <PageContent>
-        <p>Bem-vindo ao portal interno da COCAPEC.</p>
+        <p>Bem-vindo à COCAPEC.</p>
         <p>Seu perfil de acesso é: <strong>{user?.role}</strong></p>
         <div style={{ marginTop: '20px', padding: '20px', background: '#f9f9f9', border: '1px dashed #ccc', borderRadius: '4px' }}>
           <h3>Conteúdo Temporário</h3>

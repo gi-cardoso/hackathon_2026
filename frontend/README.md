@@ -1,4 +1,4 @@
-# COCAPEC | Portal Interno
+# COCAPEC
 
 Portal React + TypeScript + Vite para a operacao interna.
 
