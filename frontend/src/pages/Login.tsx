@@ -70,7 +70,6 @@ export default function Login() {
     <div className="login-page">
       <div className="login-left">
         <Logo variant="full-dark" height="clamp(48px, 8vw, 86px)" />
-        <p>Cooperativa de Cafeicultores e Agropecuaristas</p>
       </div>
 
       <div className="login-right">
