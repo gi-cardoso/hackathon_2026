@@ -56,8 +56,6 @@ const modules = [
     description: 'Portaria, estoque e movimentação de cargas.',
     roles: ['ARMAZEM', 'PORTARIA', 'ADMIN'],
     pages: [
-      { slug: 'estoque', label: 'Estoque', title: 'Estoque' },
-      { slug: 'movimentacoes', label: 'Movimentações', title: 'Movimentações' },
       { slug: 'recebimentos', label: 'Recebimentos', title: 'Recebimentos' },
     ],
   },
