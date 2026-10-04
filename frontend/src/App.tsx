@@ -84,7 +84,6 @@ const modules = [
     roles: ['ADMIN'],
     pages: [
       { slug: 'lista', label: 'Lista de usuários', title: 'Lista de usuários' },
-      { slug: 'convites', label: 'Convites', title: 'Convites' },
     ],
   },
   {
