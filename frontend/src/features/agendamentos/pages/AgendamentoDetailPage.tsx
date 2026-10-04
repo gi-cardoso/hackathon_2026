@@ -123,10 +123,10 @@ function InvoiceCard({ notaFiscal }: { notaFiscal: NotaFiscal | null | undefined
           {notaFiscal.mime_type && <div><dt>Formato</dt><dd>{notaFiscal.mime_type}</dd></div>}
           {formatFileSize(notaFiscal.tamanho_bytes) && <div><dt>Tamanho</dt><dd>{formatFileSize(notaFiscal.tamanho_bytes)}</dd></div>}
         </dl>}
-        {pdfIsAvailable ? <>
+        {pdfIsAvailable && <>
           <div className="invoice-viewer-actions"><a className="ui-button ui-button-secondary" href={pdfUrl || undefined} target="_blank" rel="noreferrer">Abrir PDF em nova aba</a></div>
           <iframe className="invoice-pdf-viewer" title={`Nota fiscal ${notaFiscal.numero_nf || notaFiscal.id_nota}`} src={pdfUrl || undefined} onError={() => setPdfError(true)} />
-        </> : <p className="invoice-unavailable">O backend não retornou uma URL visualizável para o PDF desta nota.</p>}
+        </>}
       </div>
     </Card>
   );
