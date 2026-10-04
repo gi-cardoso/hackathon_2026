@@ -83,16 +83,18 @@ export function AgendamentoFornecedorDetailPage() {
   return (
     <section className="fornecedor-agendamentos-page">
       <Link className="fornecedor-back-link" to="/agendamentos">← Meus agendamentos</Link>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Detalhes do agendamento</h2>
+      <div className="fornecedor-agendamentos-heading">
+        <div>
+          <h2>Detalhes do agendamento</h2>
+          <p>Consulta do agendamento {id ? `#${id}` : 'selecionado'} no sistema da COCAPEC.</p>
+        </div>
         {canEdit && !isReagendando && !isCancelando && (
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="fornecedor-confirmation-actions">
             <Button variant="secondary" onClick={() => setIsReagendando(true)} disabled={isProcessing}>Reagendar</Button>
             <Button variant="danger" onClick={() => setIsCancelando(true)} disabled={isProcessing}>Cancelar</Button>
           </div>
         )}
       </div>
-      <p className="fornecedor-agendamentos-description">Consulta do agendamento {id ? `#${id}` : 'selecionado'} no sistema da COCAPEC.</p>
       {isLoading && <div className="fornecedor-agendamentos-empty" role="status"><p>Carregando os dados do agendamento...</p></div>}
       {error && <div className="fornecedor-alert" role="alert">{getApiError(error)}</div>}
       
@@ -112,7 +114,7 @@ export function AgendamentoFornecedorDetailPage() {
           </article>
 
           {isCancelando && (
-            <article className="fornecedor-detail-card" style={{ gridColumn: '1 / -1', borderColor: 'var(--color-danger)' }}>
+            <article className="fornecedor-detail-card" style={{ borderColor: 'var(--color-danger)' }}>
               <span className="fornecedor-eyebrow" style={{ color: 'var(--color-danger)' }}>Cancelamento</span>
               <h3>Cancelar agendamento</h3>
               <p>Ao cancelar este agendamento, você perderá a janela de horário atual.</p>
@@ -122,7 +124,7 @@ export function AgendamentoFornecedorDetailPage() {
                 <input id="motivoCancelamento" type="text" placeholder="Ex: Carga não ficou pronta a tempo" value={motivoCancelamento} onChange={(e) => setMotivoCancelamento(e.target.value)} />
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
+              <div className="fornecedor-confirmation-actions" style={{ marginTop: '24px' }}>
                 <Button variant="danger" onClick={() => void handleConfirmarCancelamento()} disabled={isProcessing || !motivoCancelamento}>
                   Confirmar Cancelamento
                 </Button>
@@ -132,37 +134,39 @@ export function AgendamentoFornecedorDetailPage() {
           )}
 
           {isReagendando && (
-            <article className="fornecedor-detail-card" style={{ gridColumn: '1 / -1' }}>
+            <article className="fornecedor-detail-card">
               <span className="fornecedor-eyebrow">Reagendamento</span>
               <h3>Escolha os novos dados</h3>
-              <div className="fornecedor-form-group" style={{ marginTop: '16px' }}>
-                <label htmlFor="novaData">Nova data da entrega</label>
-                <input id="novaData" type="date" min={getToday()} value={novaData} onChange={(event) => { setNovaData(event.target.value); setNovoHorario(''); setSlots([]); }} />
-              </div>
-              
-              {novaData && (
-                <div className="fornecedor-slot-grid" aria-live="polite" style={{ marginTop: '16px' }}>
-                  {loadingSlots ? <p>Consultando disponibilidade...</p> : slots.map((slot) => (
-                    <button key={slot.horario} type="button" disabled={!slot.disponivel} className={`fornecedor-slot ${slot.disponivel ? 'is-available' : 'is-occupied'} ${novoHorario === slot.horario ? 'is-selected' : ''}`} onClick={() => setNovoHorario(slot.horario)}>
-                      <strong>{slot.horario}</strong>
-                      <span>{slot.disponivel ? `${slot.vagas_restantes} vaga(s)` : 'Ocupado'}</span>
-                    </button>
-                  ))}
+              <div className="fornecedor-agendamento-form" style={{ marginTop: '24px' }}>
+                <div className="fornecedor-form-group">
+                  <label htmlFor="novaData">Nova data da entrega</label>
+                  <input id="novaData" type="date" min={getToday()} value={novaData} onChange={(event) => { setNovaData(event.target.value); setNovoHorario(''); setSlots([]); }} />
                 </div>
-              )}
+                
+                {novaData && (
+                  <div className="fornecedor-slot-grid" aria-live="polite">
+                    {loadingSlots ? <p>Consultando disponibilidade...</p> : slots.map((slot) => (
+                      <button key={slot.horario} type="button" disabled={!slot.disponivel} className={`fornecedor-slot ${slot.disponivel ? 'is-available' : 'is-occupied'} ${novoHorario === slot.horario ? 'is-selected' : ''}`} onClick={() => setNovoHorario(slot.horario)}>
+                        <strong>{slot.horario}</strong>
+                        <span>{slot.disponivel ? `${slot.vagas_restantes} vaga(s)` : 'Ocupado'}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-              {novoHorario && (
-                <div className="fornecedor-form-group" style={{ marginTop: '16px' }}>
-                  <label htmlFor="motivoReagendamento">Motivo do reagendamento</label>
-                  <input id="motivoReagendamento" type="text" placeholder="Ex: Atraso na transportadora" value={motivoReagendamento} onChange={(e) => setMotivoReagendamento(e.target.value)} />
+                {novoHorario && (
+                  <div className="fornecedor-form-group">
+                    <label htmlFor="motivoReagendamento">Motivo do reagendamento</label>
+                    <input id="motivoReagendamento" type="text" placeholder="Ex: Atraso na transportadora" value={motivoReagendamento} onChange={(e) => setMotivoReagendamento(e.target.value)} />
+                  </div>
+                )}
+
+                <div className="fornecedor-confirmation-actions" style={{ marginTop: '8px' }}>
+                  <Button onClick={() => void handleConfirmarReagendamento()} disabled={isProcessing || !novaData || !novoHorario || !motivoReagendamento}>
+                    Confirmar Reagendamento
+                  </Button>
+                  <Button variant="ghost" onClick={() => setIsReagendando(false)} disabled={isProcessing}>Cancelar</Button>
                 </div>
-              )}
-
-              <div style={{ display: 'flex', gap: '8px', marginTop: '24px' }}>
-                <Button onClick={() => void handleConfirmarReagendamento()} disabled={isProcessing || !novaData || !novoHorario || !motivoReagendamento}>
-                  Confirmar Reagendamento
-                </Button>
-                <Button variant="ghost" onClick={() => setIsReagendando(false)} disabled={isProcessing}>Cancelar</Button>
               </div>
             </article>
           )}
